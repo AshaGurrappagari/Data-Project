@@ -1,5 +1,6 @@
 const sequelize = require('../config/database')
 const districtData = require('../services/districtservice');
+const {getStatusCode, statusCodes} = require('../utils/statusCode')
 
 
 let districtnew = async (req,res)=>{
@@ -8,16 +9,16 @@ let districtnew = async (req,res)=>{
        const result = await districtData(req,transaction)
        if(result.error){
         await transaction.rollback()
-        return res.status(500).send('Error in inserting')
-       }
+        return res.status(getStatusCode('INTERNAL_SERVER_ERROR')).json({message:"Failed to create new District"})
+    }
        else{
         await transaction.commit();
-        return res.status(200).send('District Data inserted successfully')
-       }
+        return res.status(getStatusCode('SUCCESS')).json({message:"District created successfully", data:result})
+    }
     }
     catch(err){
         console.log('error in giving district',err)
-        res.status(500).send('Error while inserting')
+        return res.status(getStatusCode('INTERNAL_SERVER_ERROR')).json({message:"An error occurred while creating District"})
     }
 }
 

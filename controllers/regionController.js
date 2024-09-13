@@ -1,5 +1,7 @@
 const sequelize = require('../config/database')
 const regionData = require('../services/regionservice');
+const {getStatusCode, statusCodes} = require('../utils/statusCode')
+
 
 let regionnew = async (req,res)=>{
     try{
@@ -7,18 +9,17 @@ let regionnew = async (req,res)=>{
         const result = await regionData(req,transaction)
         if(result.error){
             await transaction.rollback();
-            return res.status(500).send('Error in inserting')
+            return res.status(getStatusCode('INTERNAL_SERVER_ERROR')).json({message:"Failed to create new region"})
         }
         else{
             await transaction.commit();
-            return res.status(200).send('Region Data inserted successfully')
+            return res.status(getStatusCode('SUCCESS')).json({message:"Region created successfully", data:result})
         }
     }
     catch(error){
-        console.log('error in giving region',err)
-        return res.status(500).send('Error Occurred while inserting')
+        console.log('error in giving region',error)
+        return res.status(getStatusCode('INTERNAL_SERVER_ERROR')).json({message:"An error occurred while creating region"})
     }
-
 }
 
 module.exports = regionnew
