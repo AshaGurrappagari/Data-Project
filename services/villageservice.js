@@ -38,7 +38,7 @@ let Datavillage = async (req,t)=>{
     }
 }
 
-let villageQuery = async (req,transaction) =>{
+let villageQuery = async (req)=>{
     try{
         let villages = await villageModel.findAll({
         attributes:['region','district','ward','village',
@@ -60,7 +60,7 @@ let villageQuery = async (req,transaction) =>{
 
 }
 
-let villageDatafiltered = async (req,transaction)=>{
+let villageDatafiltered = async (req)=>{
         try{
         let villages = await villageModel.findAll({
          attributes:['region','district','ward','village',
@@ -104,7 +104,7 @@ let villageDatafiltered = async (req,transaction)=>{
         crop:village.crop,
         variety:village.variety
     }))
-        return villages
+        return formattedVillages
     }
     catch(err){
         console.log('error in fetching village',err)

@@ -24,14 +24,11 @@ let villagenew = async (req,res)=>{
 
 let villageData = async (req,res)=>{
     try{
-        const transaction = await sequelize.transaction();
-        const result = await villageQuery(req,res,transaction)
+        const result = await villageQuery(req,res)
         if(result.err){
-            await transaction.rollback()
             return res.status(getStatusCode('INTERNAL_SERVER_ERROR')).json({message:"Error in Query"})
         }
         else{
-         await transaction.commit();
          return res.status(getStatusCode('SUCCESS')).json({message:"Query Executed successfully", data:result})
         }
     }
@@ -44,14 +41,11 @@ let villageData = async (req,res)=>{
 
 let villageFilteredData = async (req,res)=>{
     try{
-        const transaction = await sequelize.transaction();
-        const result = await villageDatafiltered(req,res,transaction)
+        const result = await villageDatafiltered(req,res)
         if(result.error){
-            await transaction.rollback()
             return res.status(getStatusCode('INTERNAL_SERVER_ERROR')).json({message:"Error in Query"})
         }
         else{
-            await transaction.commit();
             return res.status(getStatusCode('SUCCESS')).json({message:"Query Executed successfully", data:result})
         }
     }
