@@ -5,7 +5,7 @@ const District = require('./district')
 const Ward = require('./ward')
 
 
-let Village = sequelize.define('village',{
+const Village = sequelize.define('village',{
     village_id:{
         type: DataTypes.INTEGER,
         autoIncrement:true,

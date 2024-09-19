@@ -1,18 +1,21 @@
 const sequelize = require('../config/database')
 const villageModel = require('../models/village')
-let region = require('../models/region')
-let district = require('../models/district')
-let ward = require('../models/ward')
+const region = require('../models/region')
+const district = require('../models/district')
+const ward = require('../models/ward')
 const { literal } = require('sequelize')
+const customException = require('../errorHandler/customException')
+const { NOT_FOUND } = require('../utils/statusCode')
+const { messages } = require('../utils/errmessage')
 
-let Datavillage = async (req,t)=>{
+const Datavillage = async (req,t)=>{
         try{
-        let {region,district,ward,village,minCurrent,maxCurrent,minLast,maxLast, crop, variety} = req.body
-        let regionId = req.params.id
-        let districtId = req.params.districtId
-        let wardId = req.params.wardId
+        const {region,district,ward,village,minCurrent,maxCurrent,minLast,maxLast, crop, variety} = req.body
+        const regionId = req.params.id
+        const districtId = req.params.districtId
+        const wardId = req.params.wardId
 
-        let newvillage = await villageModel.create(
+        const newvillage = await villageModel.create(
             {
                 region,
                 district,
@@ -30,17 +33,17 @@ let Datavillage = async (req,t)=>{
             },{transaction:t}
         )
         console.log('Village created',newvillage)
-        return Datavillage
+        return {data:newvillage}
     }
     catch(err){
         console.log('error in giving village',err)
-        return err
+        return {err:err}
     }
 }
 
-let villageQuery = async (req)=>{
+const villageQuery = async (req)=>{
     try{
-        let villages = await villageModel.findAll({
+        const villages = await villageModel.findAll({
         attributes:['region','district','ward','village',
             literal('"Min(Current)" AS "minCurrent"'),
             literal('"Max(Current)" AS "maxCurrent"'),
@@ -48,21 +51,24 @@ let villageQuery = async (req)=>{
             literal('"Max(Last)" AS "maxLast"'),
             'crop','variety'], raw:true
        });
-        let newdata = JSON.stringify(villages)
-        let newstring = JSON.parse(newdata)
+        if(!villages||villages.length === 0){
+            throw customException.error(NOT_FOUND,messages.invalidData,'Data not found')
+        }
+        const newdata = JSON.stringify(villages)
+        const newstring = JSON.parse(newdata)
         console.log('====>\n',newstring)
-        return villageQuery
-        }
-        catch(err){
-            console.log('error in fetching village',err)
-            return err
-        }
+        return {err:null,data:newstring}
+    }
+    catch(err){
+        console.log('error in fetching ward',err)
+        return {err:err}
+    }
 
 }
 
-let villageDatafiltered = async (req)=>{
+const villageDatafiltered = async (req)=>{
         try{
-        let villages = await villageModel.findAll({
+        const villages = await villageModel.findAll({
          attributes:['region','district','ward','village',
                 literal('"Min(Current)" as "minCurrent"'),
                 literal('"Max(Current)" as "maxCurrent"'),
@@ -92,6 +98,9 @@ let villageDatafiltered = async (req)=>{
             ],raw:true
         }
     )
+    if(!villages||villages.length === 0){
+        throw customException.error(NOT_FOUND,messages.invalidData,'Data not found')
+    }
     const formattedVillages = villages.map(village=>({
         region:village.region,
         district:village.district,
@@ -104,13 +113,12 @@ let villageDatafiltered = async (req)=>{
         crop:village.crop,
         variety:village.variety
     }))
-        return formattedVillages
+    return {data:formattedVillages}
     }
     catch(err){
-        console.log('error in fetching village',err)
-        return err
+        console.log('error in fetching ward',err)
+        return {err:err}
     }
-
 }
 
 module.exports = {Datavillage,villageQuery,villageDatafiltered}

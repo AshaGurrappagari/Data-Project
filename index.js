@@ -1,12 +1,15 @@
-let express = require('express')
+const express = require('express')
+const dotenv = require('dotenv')
 
-let sequelize = require('./config/database')
-let router = require('./routes/regionRoutes')
-let wardrouter = require('./routes/wardRoutes')
-let districtrouter = require('./routes/districtRoutes')
-let villagerouter = require('./routes/villageRoutes')
+dotenv.config()
 
-let app = express()
+const sequelize = require('./config/database')
+const router = require('./routes/regionRoutes')
+const wardrouter = require('./routes/wardRoutes')
+const districtrouter = require('./routes/districtRoutes')
+const villagerouter = require('./routes/villageRoutes')
+
+const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
@@ -16,7 +19,7 @@ app.use(wardrouter)
 app.use(villagerouter)
 
 sequelize.sync().then(() =>{
- app.listen(8080,()=>console.log('Connected to port'))
+ app.listen(process.env.port,()=>console.log('Connected to port'))
 })
 
 .catch(err=>{
