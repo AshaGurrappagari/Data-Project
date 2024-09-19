@@ -1,8 +1,7 @@
 
-let express = require('express')
-let router = express.Router()
-let {villagenew,villageData,villageFilteredData} = require('../controllers/villageController')
-const regionnewmd = require('../middlewares/middleware')
+const express = require('express')
+const router = express.Router()
+const {villagenew,villageData,villageFilteredData, updatedvillagedata} = require('../controllers/villageController')
 
 router.get('/village',(req,res)=>{
     res.send(`<h1>Welcome to ward page</h1>
@@ -34,4 +33,5 @@ router.get('/village',(req,res)=>{
 router.post('/village/:id/:districtId/:wardId', villagenew)
 router.get('/village/getdata', villageData)
 router.get('/village/query',villageFilteredData)
+router.post('/village/:id',updatedvillagedata)
 module.exports = router
