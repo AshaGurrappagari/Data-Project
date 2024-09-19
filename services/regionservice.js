@@ -1,3 +1,4 @@
+const regExp = require('../commons/constants');
 const sequelize = require('../config/database');
 const customException = require('../errorHandler/customException');
 const regionModel = require('../models/region');
@@ -7,7 +8,7 @@ const { NOT_FOUND, BAD_REQUEST } = require('../utils/statusCode');
 const regionData = async (req,t)=>{
     try{
         const regionData = req.body.region;
-        const letters = /^[A-Za-z\s]+$/;
+        const letters = regExp;
         if(!regionData.match(letters)){
             throw customException.error(BAD_REQUEST,messages.notCreated,'Use Only Alphabets');
         }
@@ -83,4 +84,5 @@ const regionById = async (req) => {
         return {err:err}
     }
 }
+
 module.exports = {regionData,allregion,regionById,regionByPk}

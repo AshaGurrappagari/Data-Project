@@ -1,4 +1,5 @@
 
+const regExp = require('../commons/constants');
 const sequelize = require('../config/database');
 const customException = require('../errorHandler/customException');
 const district = require('../models/district');
@@ -10,7 +11,7 @@ const districtData = async (req,t)=>{
 try{
     const districtData = req.body.district;
     const regionId = req.params.id
-    const letters = /^[A-Za-z\s]+$/;
+    const letters = regExp
     if(!districtData.match(letters)){
         throw customException.error(BAD_REQUEST,messages.notCreated,'Use Only Alphabets')
     }

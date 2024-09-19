@@ -44,7 +44,7 @@ const Datavillage = async (req,t)=>{
 const villageQuery = async (req)=>{
     try{
         const villages = await villageModel.findAll({
-        attributes:['region','district','ward','village',
+        attributes:['village_id','region','district','ward','village',
             literal('"Min(Current)" AS "minCurrent"'),
             literal('"Max(Current)" AS "maxCurrent"'),
             literal('"Min(Last)" AS "minLast"'),
@@ -121,4 +121,25 @@ const villageDatafiltered = async (req)=>{
     }
 }
 
-module.exports = {Datavillage,villageQuery,villageDatafiltered}
+const updateVillage = async (req,t) => {
+    try{
+        const regionName = req.body.region
+        const villageId = req.params.id
+
+        const [affectedRows] = await villageModel.update(
+            { region: regionName },
+            { where: { village_id: villageId }, transaction: t }
+        );
+        if(affectedRows===0){
+            throw customException.error(NOT_FOUND,'please provide a valid village_id','Data Not Found')
+        }
+        console.log(`Updated region with village_id : ${villageId}:`, affectedRows)
+        return {data:{affectedRows}}
+    }
+    catch(err){
+        console.log('error in updating data')
+        return {err:err}
+    }
+}
+
+module.exports = {Datavillage,villageQuery,villageDatafiltered,updateVillage}
