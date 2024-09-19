@@ -1,7 +1,7 @@
 
-let express = require('express')
-let router = express.Router()
-let regionnew = require('../controllers/regionController')
+const express = require('express')
+const router = express.Router()
+const {regionnew,regionnewdata, regiondatabyId, regionDataByPk} = require('../controllers/regionController')
 
 router.get('/region',(req,res)=>{
     res.send(`<h1>Welcome to Region page</h1>
@@ -14,4 +14,7 @@ router.get('/region',(req,res)=>{
 })
 
 router.post('/region', regionnew)
+router.get('/regiondata',regionnewdata)
+router.get('/region/:id',regiondatabyId)
+router.get('/regionbyPk/:id',regionDataByPk)
 module.exports = router
