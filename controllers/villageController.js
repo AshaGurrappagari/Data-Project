@@ -15,12 +15,14 @@ const villagenew = async (req,res)=>{
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage))
         }
+        else{
             await transaction.commit();
-            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},messages.Success,result.displayMessage?.SUCCESS||'villages created successfully'))
+            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},messages.Success,'villages created successfully'))
+        }
         }
         catch(err){
             console.log('error in giving village',err)
-            return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,err.displayMessage||'An error occurred while creating villages'))
+            return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while creating villages'))
         }
 }
 
@@ -30,11 +32,11 @@ const villageData = async (req,res)=>{
         if(result.err){
             return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage))
         }
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},messages.Success,result.displayMessage?.SUCCESS||'villages fetched successfully'))
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},messages.Success,'villages fetched successfully'))
     }
     catch(err){
         console.log('error in fetching village',err)
-        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,err.displayMessage||'An error occurred while fetching villages'))
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching villages'))
     }
 }
 
@@ -44,11 +46,11 @@ const villageFilteredData = async (req,res)=>{
         if(result.err){
             return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage))
         }
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},messages.Success,result.displayMessage?.SUCCESS||'villages fetched successfully'))
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},messages.Success,'villages fetched successfully'))
     }
     catch(err){
         console.log('error in fetching village',err)
-        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,err.displayMessage||'An error occurred while fetching villages'))
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching villages'))
     }
 }
 const updatedvillagedata = async (req,res) => {
@@ -60,11 +62,11 @@ const updatedvillagedata = async (req,res) => {
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage))
         }
         await transaction.commit();
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},messages.Success,'Village Updated Successfully'))
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{affectedRows:result.data.affectedRows},messages.Success,'Village Updated Successfully'))
     }
     catch(err){
         console.log('Error in updating village data',err)
-        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,err.displayMessage||'An error occurred while fetching villages'))
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching villages'))
     }
 }
 
