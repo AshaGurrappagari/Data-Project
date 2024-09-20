@@ -2,10 +2,10 @@ const regExp = require('../commons/constants');
 const sequelize = require('../config/database');
 const customException = require('../errorHandler/customException');
 const regionModel = require('../models/region');
-const { messages } = require('../utils/errmessage');
 const { NOT_FOUND, BAD_REQUEST } = require('../utils/statusCode');
 
 const letters = regExp; 
+
 const regionData = async (req,t)=>{
     try{
         const regionData = req.body.region;

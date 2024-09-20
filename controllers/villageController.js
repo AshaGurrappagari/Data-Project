@@ -16,7 +16,7 @@ const villagenew = async (req,res)=>{
         }
         else{
             await transaction.commit();
-            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},'Success','villages created successfully'))//changes
+            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},'Success','villages created successfully'))
         }
         }
         catch(err){

@@ -1,23 +1,30 @@
 const { messages } = require("../utils/errmessage");
-const { BAD_REQUEST } = require("../utils/statusCode");
+const { BAD_REQUEST, SERVER_ERROR } = require("../utils/statusCode");
 
 module.exports = {
-    error : (httpStatusCode,message,displayMessage) => {
+    error : (httpStatusCode,message,displayMessage,customData, customStatusCode) => {
 
         if(!httpStatusCode){
-            httpStatusCode = BAD_REQUEST;
+            httpStatusCode = SERVER_ERROR;
         }
-        if(!message){
-            message =null;
+        if(!customStatusCode){
+            return {
+                httpStatusCode,
+                message, 
+                displayMessage}
         }
-        if(!displayMessage){
-            displayMessage = messages.notCreated;
-        }
+        // if(!message){
+        //     message =null;
+        // }
+        // if(!displayMessage){
+        //     displayMessage = messages.notCreated;
+        // }
         return {
             httpStatusCode,
             message,
             displayMessage,
-            status:'Failure'
+            customStatusCode,
+            customData
         }
     }
 }

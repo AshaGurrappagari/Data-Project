@@ -21,7 +21,6 @@ const regionnew = async (req,res)=>{
     catch(err){
         console.log('error in giving region',err)
         return res.status(SERVER_ERROR).json(response.errorWith(err.message,'An error occurred while creating regions'))
-
     }
 }
 
