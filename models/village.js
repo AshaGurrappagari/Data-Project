@@ -1,8 +1,8 @@
-const {DataTypes}= require('sequelize')
-const sequelize = require('../config/database')
-const Region = require('./region')
-const District = require('./district')
-const Ward = require('./ward')
+const {DataTypes}= require('sequelize');
+const sequelize = require('../config/database');
+const Region = require('./region');
+const District = require('./district');
+const Ward = require('./ward');
 
 
 const Village = sequelize.define('village',{
@@ -55,7 +55,7 @@ const Village = sequelize.define('village',{
         type:DataTypes.STRING,
         allowNull:false
     }
-})
+});
 
 Village.belongsTo(Region,{
     foreignKey:{
@@ -65,7 +65,7 @@ Village.belongsTo(Region,{
     as:'Region',
     onDelete:'CASCADE',
     onUpdate:'CASCADE'
-})
+});
 
 Village.belongsTo(District,{
     foreignKey:{
@@ -75,7 +75,7 @@ Village.belongsTo(District,{
     as:'District',
     onDelete:'CASCADE',
     onUpdate:'CASCADE'
-})
+});
 Village.belongsTo(Ward,{
     foreignKey:{
         name:'wardId',
@@ -84,6 +84,6 @@ Village.belongsTo(Ward,{
     as:'Ward',
     onDelete:'CASCADE',
     onUpdate:'CASCADE'
-})
+});
 
-module.exports= Village
+module.exports= Village;

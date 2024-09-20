@@ -4,9 +4,9 @@ const messages = {
     Success : 'Success',
     notCreated : 'Not Created',
     invalidData: 'Please provide valid data'
-}
+};
 
 
 module.exports = {
     messages
-}
+};

@@ -7,6 +7,6 @@ const BAD_REQUEST = 400;
 //     return statusCodes[codeKey] || statusCodes.INTERNAL_SERVER_ERROR
 // }
 
-module.exports = {SUCCESS_CODE,NOT_FOUND,SERVER_ERROR,DATA_ALREADY_EXISTS,BAD_REQUEST}
+module.exports = {SUCCESS_CODE,NOT_FOUND,SERVER_ERROR,DATA_ALREADY_EXISTS,BAD_REQUEST};
   
-    // getStatusCode
+// getStatusCode

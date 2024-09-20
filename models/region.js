@@ -1,5 +1,5 @@
-const {DataTypes} = require('sequelize')
-const sequelize = require('../config/database')
+const {DataTypes} = require('sequelize');
+const sequelize = require('../config/database');
 
 const Region = sequelize.define('Region',{
     region_id :{
@@ -11,6 +11,6 @@ const Region = sequelize.define('Region',{
         type:DataTypes.STRING,
         allowNull:false
     }
-})
+});
 
-module.exports = Region
+module.exports = Region;

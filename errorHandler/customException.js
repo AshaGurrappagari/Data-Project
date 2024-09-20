@@ -1,5 +1,4 @@
-const { messages } = require("../utils/errmessage");
-const { BAD_REQUEST, SERVER_ERROR } = require("../utils/statusCode");
+const {  SERVER_ERROR } = require("../utils/statusCode");
 
 module.exports = {
     error : (httpStatusCode,message,displayMessage,customData, customStatusCode) => {
@@ -11,7 +10,7 @@ module.exports = {
             return {
                 httpStatusCode,
                 message, 
-                displayMessage}
+                displayMessage};
         }
         // if(!message){
         //     message =null;
@@ -25,6 +24,6 @@ module.exports = {
             displayMessage,
             customStatusCode,
             customData
-        }
+        };
     }
-}
+};

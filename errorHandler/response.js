@@ -1,4 +1,5 @@
-const constants = require('../commons/constants')
+const constants = require('../commons/constants');
+const { SUCCESS_CODE, SERVER_ERROR } = require('../utils/statusCode');
 
 module.exports = {
     successWith : (httpStatusCode,data,message,displayMessage, customStatusCode,customData) => {
@@ -18,7 +19,7 @@ module.exports = {
             customStatusCode = null;
         }
         if(!customData){
-            customData=null
+            customData=null;
         }
         return {
             httpStatusCode,
@@ -27,7 +28,7 @@ module.exports = {
             message,
             displayMessage,
             status:'OK'
-        }
+        };
     },
     errorWith : (httpStatusCode,message,displayMessage, customStatusCode) => {
         if(!httpStatusCode){
@@ -48,7 +49,6 @@ module.exports = {
             displayMessage,
             customStatusCode,
             status:'Failure'
-        }
+        };
     }
-
-}
+};
