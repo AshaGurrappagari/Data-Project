@@ -7,11 +7,11 @@ const Region = require('../models/region');
 const { messages } = require('../utils/errmessage');
 const { BAD_REQUEST, NOT_FOUND } = require('../utils/statusCode');
 
+const letters = regExp;
 const districtData = async (req,t)=>{
 try{
     const districtData = req.body.district;
     const regionId = req.params.id
-    const letters = regExp
     if(!districtData.match(letters)){
         throw customException.error(BAD_REQUEST,messages.notCreated,'Use Only Alphabets')
     }

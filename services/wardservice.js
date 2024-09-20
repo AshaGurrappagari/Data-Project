@@ -5,11 +5,11 @@ const ward = require('../models/ward');
 const { messages } = require('../utils/errmessage');
 const { BAD_REQUEST, NOT_FOUND } = require('../utils/statusCode');
 
+const letters = regExp;
 const wardData = async (req,t) => {
     try{
         const wardData = req.body.ward;
         const districtId = req.params.id
-        const letters = regExp
         if(!wardData.match(letters)){
             throw customException.error(BAD_REQUEST,messages.notCreated,'Use Only Alphabets')
         }

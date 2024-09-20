@@ -1,7 +1,7 @@
 
 const express = require('express')
 const router = express.Router()
-const {districtnew,districtDataByPk, districtDataById} = require('../controllers/districtConteoller')
+const districtController = require('../controllers/districtController')
 
 router.get('/district',(req,res)=>{
     res.send(`<h1>Welcome to district page</h1>
@@ -13,8 +13,8 @@ router.get('/district',(req,res)=>{
         `)
 })
 
-router.post('/district/:id', districtnew)
-router.get('/districtByPK/:id',districtDataByPk)
-router.get('/districtById/:id',districtDataById)
+router.post('/district/:id', districtController.districtnew)
+router.get('/districtByPK/:id',districtController.districtDataByPk)
+router.get('/districtById/:id',districtController.districtDataById)
 
 module.exports = router

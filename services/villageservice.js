@@ -126,15 +126,15 @@ const updateVillage = async (req,t) => {
         const regionName = req.body.region
         const villageId = req.params.id
 
-        const [affectedRows] = await villageModel.update(
+        const [updatedvillages] = await villageModel.update(
             { region: regionName },
             { where: { village_id: villageId }, transaction: t }
         );
-        if(affectedRows===0){
+        if(!updatedvillages||updatedvillages.error){
             throw customException.error(NOT_FOUND,'please provide a valid village_id','Data Not Found')
         }
-        console.log(`Updated region with village_id : ${villageId}:`, affectedRows)
-        return {data:{affectedRows}}
+        console.log(`Updated region with village_id : ${villageId}:`, updatedvillages)
+        return {data:{updatedvillages}}
     }
     catch(err){
         console.log('error in updating data')

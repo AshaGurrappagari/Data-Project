@@ -1,7 +1,7 @@
 
 const express = require('express')
 const router = express.Router()
-const {regionnew,regionnewdata, regiondatabyId, regionDataByPk} = require('../controllers/regionController')
+const regionController = require('../controllers/regionController')
 
 router.get('/region',(req,res)=>{
     res.send(`<h1>Welcome to Region page</h1>
@@ -13,8 +13,8 @@ router.get('/region',(req,res)=>{
         `)
 })
 
-router.post('/region', regionnew)
-router.get('/regiondata',regionnewdata)
-router.get('/region/:id',regiondatabyId)
-router.get('/regionbyPk/:id',regionDataByPk)
+router.post('/region', regionController.regionnew)
+router.get('/regiondata',regionController.regionnewdata)
+router.get('/region/:id',regionController.regiondatabyId)
+router.get('/regionbyPk/:id',regionController.regionDataByPk)
 module.exports = router

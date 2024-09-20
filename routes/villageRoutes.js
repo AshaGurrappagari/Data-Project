@@ -1,7 +1,7 @@
 
 const express = require('express')
 const router = express.Router()
-const {villagenew,villageData,villageFilteredData, updatedvillagedata} = require('../controllers/villageController')
+const villageController = require('../controllers/villageController')
 
 router.get('/village',(req,res)=>{
     res.send(`<h1>Welcome to ward page</h1>
@@ -30,8 +30,8 @@ router.get('/village',(req,res)=>{
         </form>
         `)
 })
-router.post('/village/:id/:districtId/:wardId', villagenew)
-router.get('/village/getdata', villageData)
-router.get('/village/query',villageFilteredData)
-router.post('/village/:id',updatedvillagedata)
+router.post('/village/:id/:districtId/:wardId', villageController.villagenew)
+router.get('/village/getdata', villageController.villageData)
+router.get('/village/query',villageController.villageFilteredData)
+router.post('/village/:id',villageController.updatedvillagedata)
 module.exports = router
