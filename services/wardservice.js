@@ -11,7 +11,7 @@ const wardData = async (req,t) => {
         const wardData = req.body.ward;
         const districtId = req.params.id
         if(!wardData.match(letters)){
-            throw customException.error(BAD_REQUEST,messages.notCreated,'Use Only Alphabets')
+            throw customException.error(BAD_REQUEST,'Data not created','Use Only Alphabets')
         }
         const newward = await ward.create({
             ward:wardData,
@@ -31,7 +31,7 @@ const wardByPk = async (req) => {
         const Id = req.params.id
         const wardId = await ward.findByPk(Id)
         if(!wardId||wardId.length === 0){
-            throw customException.error(NOT_FOUND,messages.invalidData,'Data Not Found')
+            throw customException.error(NOT_FOUND,'Enter a valid data','Data Not Found')
         }
         const newdata = JSON.stringify(wardId)
         const newstring = JSON.parse(newdata)
@@ -52,7 +52,7 @@ const wardById = async (req) => {
             }
         })
         if(!wardId||wardId.length === 0){
-            throw customException.error(NOT_FOUND,messages.invalidData,'Data not found')
+            throw customException.error(NOT_FOUND,'Enter a valid data','Data not found')
         }
         const newdata = JSON.stringify(wardId)
         const newstring = JSON.parse(newdata)

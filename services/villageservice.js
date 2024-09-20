@@ -52,7 +52,7 @@ const villageQuery = async (req)=>{
             'crop','variety'], raw:true
        });
         if(!villages||villages.length === 0){
-            throw customException.error(NOT_FOUND,messages.invalidData,'Data not found')
+            throw customException.error(NOT_FOUND,'Enter a valid data','Data not found')
         }
         const newdata = JSON.stringify(villages)
         const newstring = JSON.parse(newdata)
@@ -99,7 +99,7 @@ const villageDatafiltered = async (req)=>{
         }
     )
     if(!villages||villages.length === 0){
-        throw customException.error(NOT_FOUND,messages.invalidData,'Data not found')
+        throw customException.error(NOT_FOUND,'Enter a valid data','Data not found')
     }
     const formattedVillages = villages.map(village=>({
         region:village.region,
@@ -133,7 +133,6 @@ const updateVillage = async (req,t) => {
         if(!updatedvillages||updatedvillages.error){
             throw customException.error(NOT_FOUND,'please provide a valid village_id','Data Not Found')
         }
-        console.log(`Updated region with village_id : ${villageId}:`, updatedvillages)
         return {data:{updatedvillages}}
     }
     catch(err){

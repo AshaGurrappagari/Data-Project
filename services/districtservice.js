@@ -13,7 +13,7 @@ try{
     const districtData = req.body.district;
     const regionId = req.params.id
     if(!districtData.match(letters)){
-        throw customException.error(BAD_REQUEST,messages.notCreated,'Use Only Alphabets')
+        throw customException.error(BAD_REQUEST,'Data not created','Use Only Alphabets')
     }
     const newdistrict = await district.create(
         {
@@ -34,7 +34,7 @@ const districtByPk = async (req) => {
         const Id = req.params.id
         const districtId = await district.findByPk(Id)
         if(!districtId||districtId.length === 0){
-            throw customException.error(NOT_FOUND,messages.invalidData,'Data not found')
+            throw customException.error(NOT_FOUND,'Enter a valid data','Data not found')
         }
         else{
             const newdata = JSON.stringify(districtId)
@@ -57,7 +57,7 @@ const districtById = async (req) => {
             }
         })
         if(!districtId||districtId.length === 0){
-            throw customException.error(NOT_FOUND,messages.invalidData,'Data not found')
+            throw customException.error(NOT_FOUND,'Enter a valid data','Data not found')
         }
         else{
             const newdata = JSON.stringify(districtId)

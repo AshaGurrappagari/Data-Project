@@ -10,7 +10,7 @@ const regionData = async (req,t)=>{
     try{
         const regionData = req.body.region;
         if(!regionData.match(letters)){
-            throw customException.error(BAD_REQUEST,messages.notCreated,'Use Only Alphabets');
+            throw customException.error(BAD_REQUEST,'Data not Created','Use Only Alphabets');
         }
         const newregion = await regionModel.create(
             {region:regionData},
@@ -31,7 +31,7 @@ const allregion = async ()=>{
             attributes:['region_id','region']
         })
         if(!regions||regions.length === 0){
-            throw customException.error(NOT_FOUND,messages.invalidData,'Data Not Found');
+            throw customException.error(NOT_FOUND,'Enter a valid data','Data Not Found');
         }
         const newdata = JSON.stringify(regions)
         const newstring = JSON.parse(newdata)
@@ -50,7 +50,7 @@ const regionByPk = async (req) => {
         const Id = req.params.id
         const regionID = await regionModel.findByPk(Id)
         if(!regionID||regionID.length === 0){
-            throw customException.error(NOT_FOUND,messages.invalidData,'Data Not Found');
+            throw customException.error(NOT_FOUND,'Enter a valid data','Data Not Found');
         }
         const newdata = JSON.stringify(regionID)
         const newstring = JSON.parse(newdata)
@@ -72,7 +72,7 @@ const regionById = async (req) => {
             }
         })
         if(!regionID||regionID.length === 0){
-            throw customException.error(NOT_FOUND,messages.invalidData,'Data Not Found');
+            throw customException.error(NOT_FOUND,'Enter a valid data','Data Not Found');
         }
         const newdata = JSON.stringify(regionID)
         const newstring = JSON.parse(newdata)
