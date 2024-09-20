@@ -1,9 +1,9 @@
-const regExp = require('../commons/constants');
+const constants = require('../commons/constants');
 const customException = require('../errorHandler/customException');
 const regionModel = require('../models/region');
 const { NOT_FOUND, BAD_REQUEST } = require('../utils/statusCode');
 
-const letters = regExp; 
+const letters = constants.regExp;
 
 const regionData = async (req,t)=>{
     try{

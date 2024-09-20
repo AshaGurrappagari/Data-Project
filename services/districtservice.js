@@ -1,13 +1,14 @@
 
-const regExp = require('../commons/constants');
+const constants = require('../commons/constants');
 const customException = require('../errorHandler/customException');
 const district = require('../models/district');
 const { BAD_REQUEST, NOT_FOUND } = require('../utils/statusCode');
 
-const letters = regExp;
+const letters = constants.regExp;
 const districtData = async (req,t)=>{
     try{
         const regionId = req.params.id;
+        const districtData = req.body.district;
         if(!districtData.match(letters)){
             throw customException.error(BAD_REQUEST,'Data not created','Use Only Alphabets');
         }
