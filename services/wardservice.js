@@ -1,18 +1,15 @@
-const constants = require('../commons/constants');
 const customException = require('../errorHandler/customException');
+const  wardSchema  = require('../joidata/wardSchema');
 const ward = require('../models/ward');
-const { BAD_REQUEST, NOT_FOUND } = require('../utils/statusCode');
+const { NOT_FOUND } = require('../utils/statusCode');
 
-const letters = constants.regExp;
 const wardData = async (req,t) => {
     try{
-        const wardData = req.body.ward;
+        const validatedData = await wardSchema.validateAsync(req.body);
         const districtId = req.params.id;
-        if(!wardData.match(letters)){
-            throw customException.error(BAD_REQUEST,'Data not created','Use Only Alphabets');
-        }
+
         const newward = await ward.create({
-            ward:wardData,
+            ward:validatedData.ward,
             districtId :districtId
         },{transaction:t}
         );

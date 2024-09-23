@@ -1,28 +1,26 @@
-const constants = require('../commons/constants');
 const customException = require('../errorHandler/customException');
 const regionModel = require('../models/region');
-const { NOT_FOUND, BAD_REQUEST } = require('../utils/statusCode');
+const regionSchema = require('../joidata/regionSchema');
+const { NOT_FOUND} = require('../utils/statusCode');
 
-const letters = constants.regExp;
-
-const regionData = async (req,t)=>{
-    try{
-        const regionData = req.body.region;
-        if(!regionData.match(letters)){
-            throw customException.error(BAD_REQUEST,'Data not Created','Use Only Alphabets');
-        }
-        const newregion = await regionModel.create(
-            {region:regionData},
-            {transaction:t}
+const regionData = async (req, t) => {
+    try {
+        const validatedData = await regionSchema.validateAsync(req.body);
+                
+        const newRegion = await regionModel.create(
+            { region: validatedData.region }, 
+            { transaction: t }
         );
-        console.log('Region created',newregion);
-        return {data:newregion};
+
+        console.log('Region created:', newRegion);
+        return { data: newRegion };
     }
-    catch(err){
+    catch (err) {
         console.log('region data not successfully created:',err);
         return {err:err};
     }
 };
+
 
 const allregion = async ()=>{
     try{

@@ -1,20 +1,18 @@
 
-const constants = require('../commons/constants');
 const customException = require('../errorHandler/customException');
+const districtSchema = require('../joidata/districtSchema');
 const district = require('../models/district');
-const { BAD_REQUEST, NOT_FOUND } = require('../utils/statusCode');
+const { NOT_FOUND } = require('../utils/statusCode');
 
-const letters = constants.regExp;
 const districtData = async (req,t)=>{
     try{
         const regionId = req.params.id;
-        const districtData = req.body.district;
-        if(!districtData.match(letters)){
-            throw customException.error(BAD_REQUEST,'Data not created','Use Only Alphabets');
-        }
+        const validatedData = await districtSchema.validateAsync(req.body);
+
+
         const newdistrict = await district.create(
             {
-                district:districtData,
+                district:validatedData.district,
                 regionId :regionId
             },{transaction:t});
         console.log('District created',newdistrict);

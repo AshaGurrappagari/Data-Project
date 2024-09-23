@@ -5,26 +5,29 @@ const ward = require('../models/ward');
 const { literal } = require('sequelize');
 const customException = require('../errorHandler/customException');
 const { NOT_FOUND } = require('../utils/statusCode');
+const villageSchema = require('../joidata/villageSchema');
 
 const Datavillage = async (req,t)=>{
     try{
-        const {region,district,ward,village,minCurrent,maxCurrent,minLast,maxLast, crop, variety} = req.body;
+        // const {region,district,ward,village,minCurrent,maxCurrent,minLast,maxLast, crop, variety} = req.body;
+        const validatedData = await villageSchema.validateAsync(req.body);
+
         const regionId = req.params.id;
         const districtId = req.params.districtId;
         const wardId = req.params.wardId;
 
         const newvillage = await villageModel.create(
             {
-                region,
-                district,
-                ward,
-                village,
-                minCurrent,
-                maxCurrent,
-                minLast,
-                maxLast,
-                crop,
-                variety,
+                region:validatedData.region,
+                district:validatedData.district,
+                ward:validatedData.ward,
+                village:validatedData.village,
+                minCurrent:validatedData.minCurrent,
+                maxCurrent:validatedData.maxCurrent,
+                minLast:validatedData.minLast,
+                maxLast:validatedData.maxLast,
+                crop:validatedData.crop,
+                variety:validatedData.variety,
                 regionId:regionId,
                 districtId:districtId,
                 wardId:wardId
