@@ -1,9 +1,9 @@
-const regExp = require('../commons/constants');
+const constants = require('../commons/constants');
 const customException = require('../errorHandler/customException');
 const ward = require('../models/ward');
 const { BAD_REQUEST, NOT_FOUND } = require('../utils/statusCode');
 
-const letters = regExp;
+const letters = constants.regExp;
 const wardData = async (req,t) => {
     try{
         const wardData = req.body.ward;
