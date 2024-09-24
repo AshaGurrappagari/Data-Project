@@ -15,3 +15,6 @@ const regionSchema = joi.object({
 });
 
 module.exports = regionSchema;
+
+//validate - req.body && schema
+//includes
