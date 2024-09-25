@@ -70,6 +70,40 @@ const updatedvillagedata = async (req,res) => {
     }
 };
 
+const deletedvillagedata = async (req,res) => {
+    try{
+        const transaction = await sequelize.transaction();
+        const result = await villageService.deletevillage(req,transaction);
+        if(result.err){
+            await transaction.rollback();
+            return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
+        }
+        await transaction.commit();
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{deletedvillag:result.data.deletedvillages},'Success','Village deleted Successfully'));
+    }
+    catch(err){
+        console.log('Error in deleting village data',err);
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching villages'));
+    }
+};
 
-module.exports = {villagenew,villageData,villageFilteredData,updatedvillagedata};
+const getActiveVillages = async (req,res) => {
+    try{
+        const transaction = await sequelize.transaction();
+        const result = await villageService.activeVillages(req,transaction);
+        if(result.err){
+            await transaction.rollback();
+            return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
+        }
+        await transaction.commit();
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{activeVillage:result.data},'Success','Village fetched Successfully'));
+    }
+    catch(err){
+        console.log('Error in fetching village data',err);
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching villages'));
+    }
+        
+};
+
+module.exports = {villagenew,villageData,villageFilteredData,updatedvillagedata,deletedvillagedata,getActiveVillages};
 

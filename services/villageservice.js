@@ -2,7 +2,7 @@ const villageModel = require('../models/village');
 const region = require('../models/region');
 const district = require('../models/district');
 const ward = require('../models/ward');
-const { literal } = require('sequelize');
+const { Op,literal } = require('sequelize');
 const customException = require('../errorHandler/customException');
 const { NOT_FOUND } = require('../utils/statusCode');
 const villageSchema = require('../joidata/villageSchema');
@@ -42,29 +42,33 @@ const Datavillage = async (req,t)=>{
     }
 };
 
-const villageQuery = async ()=>{
-    try{
+const villageQuery = async () => {
+    try {
         const villages = await villageModel.findAll({
-            attributes:['village_id','region','district','ward','village',
+            attributes: [
+                'village_id', 'region', 'district', 'ward', 'village',
                 literal('"Min(Current)" AS "minCurrent"'),
                 literal('"Max(Current)" AS "maxCurrent"'),
                 literal('"Min(Last)" AS "minLast"'),
                 literal('"Max(Last)" AS "maxLast"'),
-                'crop','variety'], raw:true
+                'crop', 'variety', 'deletedAt' 
+            ],
+            paranoid: false, 
+            raw: true 
         });
-        if(!villages||villages.length === 0){
-            throw customException.error(NOT_FOUND,'Enter a valid data','Data not found');
+
+        if (!villages || villages.length === 0) {
+            throw customException.error(NOT_FOUND, 'Enter a valid data', 'Data not found');
         }
-        const newdata = JSON.stringify(villages);
-        const newstring = JSON.parse(newdata);
-        console.log('====>\n',newstring);
-        return {err:null,data:newstring};
-    }
-    catch(err){
-        console.log('error in fetching ward',err);
-        return {err:err};
+
+        return { err: null, data: villages }; 
+    } catch (err) {
+        console.log('Error in fetching villages', err);
+        return { err: err };
     }
 };
+
+
 
 const villageDatafiltered = async ()=>{
     try{
@@ -134,10 +138,53 @@ const updateVillage = async (req,t) => {
         }
         return {data:{updatedvillages}};
     }
-    catch(err){
+    catch(error){
         console.log('error in updating data');
-        return {err:err};
+        return {err:error};
     }
 };
 
-module.exports = {Datavillage,villageQuery,villageDatafiltered,updateVillage};
+const deletevillage = async (req,t) =>{
+    try{
+        const villageId = req.params.id;
+
+        const deletedvillages = await villageModel.destroy(
+            {
+                where: {village_id:villageId},transaction:t
+            }
+        );
+        if(!deletedvillages||deletedvillages.error){
+            throw customException.error(NOT_FOUND,'Please provide a valid village_id','Data Not Found');
+        }
+        return {data:{deletedvillages}};
+
+    }
+    catch(error){
+        console.log('error in deleting data');
+        return {err:error};
+    }
+};
+
+const activeVillages = async (req, t) => {
+    try {
+        const activeVillage = await villageModel.findAll({
+            where: {
+                deletedAt: {
+                    [Op.is]: null
+                }
+            },
+            transaction: t
+        });
+        if (!activeVillage || activeVillage.length === 0) {
+            throw customException.error(NOT_FOUND, 'No active villages found', 'Data Not Found');
+        }
+        return { data: activeVillage };
+    } catch (error) {
+        console.log('Error in fetching active villages', error);
+        return { err: error };
+    }
+};
+
+
+
+module.exports = {Datavillage,villageQuery,villageDatafiltered,updateVillage,deletevillage,activeVillages};

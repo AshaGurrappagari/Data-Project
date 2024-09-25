@@ -233,42 +233,6 @@ router.get('/village/query',villageController.villageFilteredData);
  *                 type: string
  *                 description: The name of the region.
  *                 example: India
- *               district:
- *                 type: string
- *                 description: The name of the district.
- *                 example: AP
- *               ward:
- *                 type: string
- *                 description: The name of the ward.
- *                 example: TPT
- *               village:
- *                 type: string
- *                 description: The name of the village.
- *                 example: SN
- *               minCurrent:
- *                 type: integer
- *                 description: Minimum current value.
- *                 example: 42000
- *               maxCurrent:
- *                 type: integer
- *                 description: Maximum current value.
- *                 example: 42000
- *               minLast:
- *                 type: integer
- *                 description: Minimum last value.
- *                 example: 42000
- *               maxLast:
- *                 type: integer
- *                 description: Maximum last value.
- *                 example: 42000
- *               crop:
- *                 type: string
- *                 description: Crop name.
- *                 example: new crop
- *               variety:
- *                 type: string
- *                 description: Variety name.
- *                 example: new variety
  *     responses:
  *       200:
  *         description: Village data updated successfully.
@@ -303,5 +267,45 @@ router.get('/village/query',villageController.villageFilteredData);
  */
 
 router.put('/village/:id',villageController.updatedvillagedata);
+
+/**
+ * @swagger
+ * /village/{id}:
+ *   delete:
+ *     summary: Delete village data with villageId
+ *     description: Soft Delete village data with villageId
+ *     parameters:
+ *         - in: path
+ *           name: id
+ *           required: true
+ *           description: numeric Id required
+ *           schema: 
+ *              type: integer
+ *     responses:
+ *       200:
+ *         description: Village data deleted successfully.
+ */
+
+
+router.delete('/village/:id',villageController.deletedvillagedata);
+
+/** 
+* @swagger
+* /activevillages:
+*   get:
+*     summary: Get all Active Villages
+*     description: Retrieve a list of all Active Villages.
+*     responses:
+*       200:
+*         description: A JSON array of village objects
+*         content:
+*           application/json:
+*             schema:
+*               type: array
+*               items:
+*                  $ref : '#components/schemas/Village'
+*/
+
+router.get('/activevillages',villageController.getActiveVillages);
 
 module.exports = router;

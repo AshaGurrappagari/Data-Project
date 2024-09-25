@@ -54,7 +54,15 @@ const Village = sequelize.define('village',{
     variety:{
         type:DataTypes.STRING,
         allowNull:false
+    },
+    deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
     }
+}, 
+{
+    paranoid: true, // This enables the soft delete feature
+    timestamps: true // This enables `createdAt` and `updatedAt` fields
 });
 
 Village.belongsTo(Region,{
