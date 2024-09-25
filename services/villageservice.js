@@ -165,7 +165,7 @@ const deletevillage = async (req,t) =>{
     }
 };
 
-const activeVillages = async (req, t) => {
+const activeVillages = async () => {
     try {
         const activeVillage = await villageModel.findAll({
             where: {
@@ -173,7 +173,6 @@ const activeVillages = async (req, t) => {
                     [Op.is]: null
                 }
             },
-            transaction: t
         });
         if (!activeVillage || activeVillage.length === 0) {
             throw customException.error(NOT_FOUND, 'No active villages found', 'Data Not Found');
