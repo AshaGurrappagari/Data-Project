@@ -54,27 +54,25 @@ const customException = require('../errorHandler/customException');
  *         description: Data inserted successfully
  */
 
-/**
- * @swagger
- * /districtByPK/{id}:
- *   get:
- *     summary: Get district data with primary key
- *     description: Retrieve district data with primary key.
- *     parameters:
- *         - in: path
- *           name: id
- *           required: true
- *           description: Numeric ID required
- *           schema: 
- *              type: integer
- *     responses:
- *       200:
- *         description: A JSON object of the district
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/District'
- */
+const districtnew = async (req,res)=>{
+    try{
+        const transaction = await sequelize.transaction();
+        const result = await districtService.districtData(req,transaction);
+        if(result.err){
+            await transaction.rollback();
+            return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
+        }
+        else{
+            await transaction.commit();
+            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{regionD:result.data},'Success','districts created successfully'));
+        }
+    }
+    catch(err){
+        console.log('error in giving district',err);
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while creating districts'));
+
+    }
+};
 
 /**
  * @swagger
@@ -98,26 +96,6 @@ const customException = require('../errorHandler/customException');
  *               $ref: '#/components/schemas/District'
  */
 
-const districtnew = async (req,res)=>{
-    try{
-        const transaction = await sequelize.transaction();
-        const result = await districtService.districtData(req,transaction);
-        if(result.err){
-            await transaction.rollback();
-            return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
-        }
-        else{
-            await transaction.commit();
-            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{regionD:result.data},'Success','districts created successfully'));
-        }
-    }
-    catch(err){
-        console.log('error in giving district',err);
-        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while creating districts'));
-
-    }
-};
-
 const districtDataById = async (req,res) => {
     try{
         const result = await districtService.districtById(req);
@@ -129,7 +107,31 @@ const districtDataById = async (req,res) => {
     catch(err){
         console.log('error in fetching district',err);
         return res.status(SERVER_ERROR).json(response.errorWith(err.message,'An error occurred while fetching districts'));
-    }};
+    }
+};
+
+/**
+ * @swagger
+ * /districtByPK/{id}:
+ *   get:
+ *     summary: Get district data with primary key
+ *     description: Retrieve district data with primary key.
+ *     parameters:
+ *         - in: path
+ *           name: id
+ *           required: true
+ *           description: Numeric ID required
+ *           schema: 
+ *              type: integer
+ *     responses:
+ *       200:
+ *         description: A JSON object of the district
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/District'
+ */
+
 
 const districtDataByPk = async (req,res) => {
     try{

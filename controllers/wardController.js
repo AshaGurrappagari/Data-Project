@@ -54,6 +54,25 @@ const customException = require('../errorHandler/customException');
  *         description: Data inserted successfully
  */
 
+const wardnew = async (req,res)=>{
+    try{
+        const transaction = await sequelize.transaction();
+        const result = await wardService.wardData(req,transaction);
+        if(result.err){
+            await transaction.rollback();
+            return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
+        }
+        else{
+            await transaction.commit();
+            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{regionD:result.data},'Success','wards created successfully'));
+        }
+    }
+    catch(err){
+        console.log('error in giving ward',err);
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while creating wards'));
+    }
+};
+
 /**
  * @swagger
  * /wardbyId/{id}:
@@ -78,6 +97,20 @@ const customException = require('../errorHandler/customException');
  *                  $ref : '#components/schemas/Ward'
  */
 
+const wardDataById = async (req,res) => {
+    try{
+        const result = await wardService.wardById(req);
+        if(result.err){
+            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage));
+        }
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{regionD:result.data},'Success','wards fetched successfully'));
+    }
+    catch(err){
+        console.log('error in fetching ward',err);
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching wards'));
+    }
+};
+
 /**
  * @swagger
  * /wardbyPk/{id}:
@@ -101,39 +134,6 @@ const customException = require('../errorHandler/customException');
  *               items:
  *                  $ref : '#components/schemas/Ward'
  */
-
-const wardnew = async (req,res)=>{
-    try{
-        const transaction = await sequelize.transaction();
-        const result = await wardService.wardData(req,transaction);
-        if(result.err){
-            await transaction.rollback();
-            return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
-        }
-        else{
-            await transaction.commit();
-            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{regionD:result.data},'Success','wards created successfully'));
-        }
-    }
-    catch(err){
-        console.log('error in giving ward',err);
-        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while creating wards'));
-    }
-};
-
-const wardDataById = async (req,res) => {
-    try{
-        const result = await wardService.wardById(req);
-        if(result.err){
-            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage));
-        }
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{regionD:result.data},'Success','wards fetched successfully'));
-    }
-    catch(err){
-        console.log('error in fetching ward',err);
-        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching wards'));
-    }
-};
 
 const wardDataByPk = async (req,res) => {
     try{
