@@ -4,6 +4,105 @@ const response = require('../errorHandler/response');
 const regionService = require('../services/regionservice');
 const {SUCCESS_CODE,NOT_FOUND,SERVER_ERROR,BAD_REQUEST} = require('../utils/statusCode');
 
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          Region:
+ *              type: object
+ *              properties:
+ *                  region_id:
+ *                      type: integer
+ *                      description: this is regionId
+ *                      example: 1
+ *                  region:
+ *                      type: string
+ *                      description: the name
+ *                      example: India
+ */
+
+/**
+ * @swagger
+ * /region:
+ *   post:
+ *     summary: Insert Region Data
+ *     description: Insert Region Data into the database
+ *     requestBody: 
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Region'
+ *     responses:
+ *       200:
+ *         description: Data inserted successfully
+ */
+
+/**
+ * @swagger
+ * /regiondata:
+ *   get:
+ *     summary: Get all regions
+ *     description: Retrieve a list of all regions.
+ *     responses:
+ *       200:
+ *         description: A JSON array of region objects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                  $ref : '#components/schemas/Region'
+ */
+
+/**
+ * @swagger
+ * /region/{id}:
+ *   get:
+ *     summary: Get region data with regionId
+ *     description: Retrieve region data with regionId.
+ *     parameters:
+ *         - in: path
+ *           name: id
+ *           required: true
+ *           description: numeric Id required
+ *           schema: 
+ *              type: integer
+ *     responses:
+ *       200:
+ *         description: A JSON array of region object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                  $ref : '#components/schemas/Region'
+ */
+
+
+/**
+ * @swagger
+ * /regionbyPk/{id}:
+ *   get:
+ *     summary: get region data with primary key
+ *     description: Retrieve region data with primary key.
+ *     parameters:
+ *         - in: path
+ *           name: id
+ *           required: true
+ *           description: numeric Id required
+ *           schema: 
+ *              type: integer
+ *     responses:
+ *       200:
+ *         description: A JSON array of region object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                  $ref : '#components/schemas/Region'
+ */
 
 const regionnew = async (req,res)=>{
     try{
