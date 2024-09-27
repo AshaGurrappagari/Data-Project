@@ -199,24 +199,6 @@ const villageByPK = async (req,res)=>{
     }
 };
 
-
-// /** 
-// * @swagger
-// * /village/query:
-// *   get:
-// *     summary: Get all Villages
-// *     description: Retrieve a list of all  filtered Villages.
-// *     responses:
-// *       200:
-// *         description: A JSON array of village objects
-// *         content:
-// *           application/json:
-// *             schema:
-// *               type: array
-// *               items:
-// *                  $ref : '#components/schemas/Village'
-// */
-
 // const villageFilteredData = async (req,res)=>{
 //     try{
 //         const result = await villageService.villageDatafiltered(req,res);
