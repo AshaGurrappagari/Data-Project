@@ -15,8 +15,12 @@ router.get('/ward',(req,res)=>{
 
 router.post('/ward/:id', wardController.wardnew);
 
-router.get('/wardbyId/:id', wardController.wardDataById);
-
 router.get('/wardbyPk/:id', wardController.wardDataByPk);
+
+router.put('/ward/:id',wardController.updatedWardData);
+
+router.delete('/ward/:id',wardController.deletedWardData);
+
+router.get('/warddata',wardController.allwardsData);
 
 module.exports = router;

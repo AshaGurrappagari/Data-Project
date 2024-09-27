@@ -13,7 +13,7 @@ const customException = require('../errorHandler/customException');
  *              properties:
  *                  village_id:
  *                      type: integer
- *                      description: This is the district ID
+ *                      description: This is the village ID
  *                      example: 1
  *                  region:
  *                      type: string
@@ -161,30 +161,37 @@ const villagenew = async (req,res)=>{
     }
 };
 
-/** 
-* @swagger
-* /village/getdata:
-*   get:
-*     summary: Get all Villages
-*     description: Retrieve a list of all Villages.
-*     responses:
-*       200:
-*         description: A JSON array of village objects
-*         content:
-*           application/json:
-*             schema:
-*               type: array
-*               items:
-*                  $ref : '#components/schemas/Village'
-*/
+/**
+ * @swagger
+ * /village/{id}:
+ *   get:
+ *     summary: get village data with primary key
+ *     description: Retrieve village data with primary key.
+ *     parameters:
+ *         - in: path
+ *           name: id
+ *           required: true
+ *           description: numeric Id required
+ *           schema: 
+ *              type: integer
+ *     responses:
+ *       200:
+ *         description: A JSON array of Village object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                  $ref : '#components/schemas/Village'
+ */
 
-const villageData = async (req,res)=>{
+const villageByPK = async (req,res)=>{
     try{
-        const result = await villageService.villageQuery(req,res);
+        const result = await villageService.villageByPk(req,res);
         if(result.err){
             return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage));
         }
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},'Success','villages fetched successfully'));
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{activeVillage:result.data.activeVillage},'Success','villages fetched successfully'));
     }
     catch(err){
         console.log('error in fetching village',err);
@@ -193,36 +200,36 @@ const villageData = async (req,res)=>{
 };
 
 
-/** 
-* @swagger
-* /village/query:
-*   get:
-*     summary: Get all Villages
-*     description: Retrieve a list of all  filtered Villages.
-*     responses:
-*       200:
-*         description: A JSON array of village objects
-*         content:
-*           application/json:
-*             schema:
-*               type: array
-*               items:
-*                  $ref : '#components/schemas/Village'
-*/
+// /** 
+// * @swagger
+// * /village/query:
+// *   get:
+// *     summary: Get all Villages
+// *     description: Retrieve a list of all  filtered Villages.
+// *     responses:
+// *       200:
+// *         description: A JSON array of village objects
+// *         content:
+// *           application/json:
+// *             schema:
+// *               type: array
+// *               items:
+// *                  $ref : '#components/schemas/Village'
+// */
 
-const villageFilteredData = async (req,res)=>{
-    try{
-        const result = await villageService.villageDatafiltered(req,res);
-        if(result.err){
-            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage));
-        }
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},'Success','villages fetched successfully'));
-    }
-    catch(err){
-        console.log('error in fetching village',err);
-        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching villages'));
-    }
-};
+// const villageFilteredData = async (req,res)=>{
+//     try{
+//         const result = await villageService.villageDatafiltered(req,res);
+//         if(result.err){
+//             return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage));
+//         }
+//         return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},'Success','villages fetched successfully'));
+//     }
+//     catch(err){
+//         console.log('error in fetching village',err);
+//         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching villages'));
+//     }
+// };
 
 /**
  * @swagger
@@ -244,9 +251,9 @@ const villageFilteredData = async (req,res)=>{
  *           schema:
  *             type: object
  *             properties:
- *               region:
+ *               village:
  *                 type: string
- *                 description: The name of the region.
+ *                 description: The name of the village.
  *                 example: India
  *     responses:
  *       200:
@@ -333,40 +340,97 @@ const deletedvillagedata = async (req,res) => {
     }
 };
 
-/** 
-* @swagger
-* /activevillages:
-*   get:
-*     summary: Get all Active Villages
-*     description: Retrieve a list of all Active Villages.
-*     responses:
-*       200:
-*         description: A JSON array of village objects
-*         content:
-*           application/json:
-*             schema:
-*               type: array
-*               items:
-*                  $ref : '#components/schemas/Village'
-*/
+/**
+ * @swagger
+ * /paginatedData:
+ *   get:
+ *     summary: Get village data with pagination
+ *     description: Retrieve paginated village data with sorting options.
+ *     parameters:
+ *         - in: query
+ *           name: pageNumber
+ *           description: The page number to retrieve (starting from 1).
+ *           schema: 
+ *              type: integer
+ *         - in: query
+ *           name: pageSize
+ *           description: The number of villages to return per page.
+ *           schema: 
+ *              type: integer
+ *         - in: query
+ *           name: orderBy
+ *           description: The column to order by (e.g., 'village_id').
+ *           schema: 
+ *              type: string
+ *         - in: query
+ *           name: sortBy
+ *           description: The sorting direction (ASC or DESC).
+ *           schema: 
+ *              type: string
+ *     responses:
+ *       200:
+ *         description: A paginated list of villages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 villages:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Village'
+ *                 totalItems:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
+ *                 currentPage:
+ *                   type: integer
+ *       404:
+ *         description: The requested page does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 displayMessage:
+ *                   type: string
+ *       500:
+ *         description: An internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 displayMessage:
+ *                   type: string
+ */
 
-const getActiveVillages = async (req,res) => {
-    try{
-        const transaction = await sequelize.transaction();
-        const result = await villageService.activeVillages(req,transaction);
-        if(result.err){
-            await transaction.rollback();
-            return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
+const allvillageData = async (req, res) => {
+    try {
+        const result = await villageService.allvillages(req);
+
+        if (result.err) {
+            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, 'Failed to fetch villages'));
         }
-        await transaction.commit();
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{activeVillage:result.data},'Success','Village fetched Successfully'));
+
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, {
+            villages: result.data.villages, 
+            totalItems: result.data.totalItems,
+            totalPages: result.data.totalPages,
+            currentPage: result.data.currentPage
+        }, 'Success', 'Villages fetched successfully'));
+
+    } catch (err) {
+        console.log('Error in fetching villages', err);
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching villages'));
     }
-    catch(err){
-        console.log('Error in fetching village data',err);
-        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching villages'));
-    }
-        
 };
 
-module.exports = {villagenew,villageData,villageFilteredData,updatedvillagedata,deletedvillagedata,getActiveVillages};
+
+
+module.exports = {villagenew,villageByPK,updatedvillagedata,deletedvillagedata,allvillageData};
 

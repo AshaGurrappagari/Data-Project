@@ -10,7 +10,15 @@ const Region = sequelize.define('Region',{
     region:{
         type:DataTypes.STRING,
         allowNull:false
+    },
+    deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
     }
+},
+{
+    paranoid: true, 
+    timestamps: true 
 });
 
 module.exports = Region;

@@ -4,6 +4,7 @@ const sequelize = new Sequelize(process.env.database,process.env.username,proces
     host:process.env.host,
     dialect: process.env.dialect,
     attributeBehavior: 'escape',
+    logging: console.log 
 });
 
 module.exports =  sequelize;

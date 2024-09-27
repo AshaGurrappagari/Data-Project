@@ -15,8 +15,12 @@ router.get('/district', (req, res) => {
 
 router.post('/district/:id', districtController.districtnew);
 
+router.get('/districtData',districtController.alldistrictsData);
+
 router.get('/districtByPK/:id', districtController.districtDataByPk);
 
-router.get('/districtById/:id', districtController.districtDataById);
+router.put('/district/:id',districtController.updatedDistrictData);
+
+router.delete('/district/:id',districtController.deletedDistrictsData);
 
 module.exports = router;

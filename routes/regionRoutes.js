@@ -16,10 +16,12 @@ router.get('/region', (req, res) => {
 
 router.post('/region', regionController.regionnew);
 
-router.get('/regiondata', regionController.regionnewdata);
-
-router.get('/region/:id', regionController.regiondatabyId);
+router.get('/regionData', regionController.allregionData);
 
 router.get('/regionbyPk/:id', regionController.regionDataByPk);
+
+router.put('/region/:id', regionController.updatedRegiondata);
+
+router.delete('/region/:id',regionController.deletedRegiondata);
 
 module.exports = router;

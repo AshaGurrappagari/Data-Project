@@ -11,7 +11,15 @@ const Ward = sequelize.define('Ward',{
     ward:{
         type:DataTypes.STRING,
         allowNull:false
+    },    
+    deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
     }
+},
+{
+    paranoid: true, 
+    timestamps: true 
 });
 
 Ward.belongsTo(District,{

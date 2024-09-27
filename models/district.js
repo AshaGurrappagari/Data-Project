@@ -11,8 +11,17 @@ const District = sequelize.define('District',{
     district:{
         type:DataTypes.STRING,
         allowNull:false
+    },
+    deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
     }
+},
+{
+    paranoid: true, 
+    timestamps: true 
 });
+
 District.belongsTo(Region,{
     foreignKey:{
         name:'regionId',

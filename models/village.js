@@ -61,8 +61,8 @@ const Village = sequelize.define('village',{
     }
 }, 
 {
-    paranoid: true, // This enables the soft delete feature
-    timestamps: true // This enables `createdAt` and `updatedAt` fields
+    paranoid: true, 
+    timestamps: true 
 });
 
 Village.belongsTo(Region,{
