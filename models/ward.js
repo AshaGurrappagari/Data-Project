@@ -1,6 +1,6 @@
-const {DataTypes} = require('sequelize')
-const sequelize = require('../config/database')
-const District = require('./district')
+const {DataTypes} = require('sequelize');
+const sequelize = require('../config/database');
+const District = require('./district');
 
 const Ward = sequelize.define('Ward',{
     ward_id:{
@@ -11,8 +11,16 @@ const Ward = sequelize.define('Ward',{
     ward:{
         type:DataTypes.STRING,
         allowNull:false
+    },    
+    deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
     }
-})
+},
+{
+    paranoid: true, 
+    timestamps: true 
+});
 
 Ward.belongsTo(District,{
     foreignKey:{
@@ -22,6 +30,6 @@ Ward.belongsTo(District,{
     },
     onDelete:'CASCADE',
     onUpdate:'CASCADE'
-})
+});
 
-module.exports=Ward
+module.exports=Ward;

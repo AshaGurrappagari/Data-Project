@@ -1,6 +1,6 @@
-const {DataTypes} = require('sequelize')
-const sequelize = require('../config/database')
-const Region = require('./region')
+const {DataTypes} = require('sequelize');
+const sequelize = require('../config/database');
+const Region = require('./region');
 
 const District = sequelize.define('District',{
     district_id :{
@@ -11,8 +11,17 @@ const District = sequelize.define('District',{
     district:{
         type:DataTypes.STRING,
         allowNull:false
+    },
+    deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
     }
-})
+},
+{
+    paranoid: true, 
+    timestamps: true 
+});
+
 District.belongsTo(Region,{
     foreignKey:{
         name:'regionId',
@@ -21,6 +30,6 @@ District.belongsTo(Region,{
     },
     onDelete:'CASCADE',
     onUpdate:'CASCADE'
-})
+});
 
-module.exports = District
+module.exports = District;

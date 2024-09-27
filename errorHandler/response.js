@@ -1,5 +1,5 @@
-const { messages } = require("../utils/errmessage");
-const { SUCCESS_CODE, SERVER_ERROR } = require("../utils/statusCode");
+const constants = require('../commons/constants');
+const { SUCCESS_CODE, SERVER_ERROR } = require('../utils/statusCode');
 
 module.exports = {
     successWith : (httpStatusCode,data,message,displayMessage, customStatusCode,customData) => {
@@ -13,22 +13,22 @@ module.exports = {
             message =null;
         }
         if(!displayMessage){
-            displayMessage = messages.Success;
+            displayMessage = constants.SomethingWrong; 
         }
-        // if(!customStatusCode){
-        //     customStatusCode = null;
-        // }
-        // if(!customData){
-        //     customData=null
-        // }
+        if(!customStatusCode){
+            customStatusCode = null;
+        }
+        if(!customData){
+            customData=null;
+        }
         return {
             httpStatusCode,
-            // customStatusCode,
-            result:{data},
+            customStatusCode,
+            result:{data,customData},
             message,
             displayMessage,
             status:'OK'
-        }
+        };
     },
     errorWith : (httpStatusCode,message,displayMessage, customStatusCode) => {
         if(!httpStatusCode){
@@ -38,18 +38,17 @@ module.exports = {
             message =null;
         }
         if(!displayMessage){
-            displayMessage = messages.unknownErrorMessage;
+            displayMessage = constants.unknownErrorMessage;
         }
-        // if(!customStatusCode){
-        //     customStatusCode = null;
-        // }
+        if(!customStatusCode){
+            customStatusCode = null;
+        }
         return {
             httpStatusCode,
-            // customStatusCode,
             message,
             displayMessage,
+            customStatusCode,
             status:'Failure'
-        }
+        };
     }
-
-}
+};

@@ -1,20 +1,26 @@
+const express = require('express');
+const router = express.Router();
+const districtController = require('../controllers/districtController');
 
-const express = require('express')
-const router = express.Router()
-const {districtnew,districtDataByPk, districtDataById} = require('../controllers/districtConteoller')
-
-router.get('/district',(req,res)=>{
-    res.send(`<h1>Welcome to district page</h1>
-        <form action='/district/1' method='post' >
-        <label for='district'>district:</label>
-        <input type='text' id = 'district' name='district'/></br>
-        <input type='submit' value='submit'/>
+router.get('/district', (req, res) => {
+    res.send(`
+        <h1>Welcome to the District page</h1>
+        <form action='/district/1' method='post'>
+            <label for='district'>District:</label>
+            <input type='text' id='district' name='district'/><br/>
+            <input type='submit' value='Submit'/>
         </form>
-        `)
-})
+    `);
+});
 
-router.post('/district/:id', districtnew)
-router.get('/districtByPK/:id',districtDataByPk)
-router.get('/districtById/:id',districtDataById)
+router.post('/district/:id', districtController.districtnew);
 
-module.exports = router
+router.get('/districtData',districtController.alldistrictsData);
+
+router.get('/districtByPK/:id', districtController.districtDataByPk);
+
+router.put('/district/:id',districtController.updatedDistrictData);
+
+router.delete('/district/:id',districtController.deletedDistrictsData);
+
+module.exports = router;

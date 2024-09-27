@@ -1,7 +1,7 @@
 
-const express = require('express')
-const router = express.Router()
-const {villagenew,villageData,villageFilteredData, updatedvillagedata} = require('../controllers/villageController')
+const express = require('express');
+const router = express.Router();
+const villageController = require('../controllers/villageController');
 
 router.get('/village',(req,res)=>{
     res.send(`<h1>Welcome to ward page</h1>
@@ -28,10 +28,19 @@ router.get('/village',(req,res)=>{
         <input type='text' id = 'variety' name='variety'/></br>
         <input type='submit' value='submit'/>
         </form>
-        `)
-})
-router.post('/village/:id/:districtId/:wardId', villagenew)
-router.get('/village/getdata', villageData)
-router.get('/village/query',villageFilteredData)
-router.post('/village/:id',updatedvillagedata)
-module.exports = router
+        `);
+});
+
+router.post('/village/:id/:districtId/:wardId', villageController.villagenew);
+
+router.get('/village/:id', villageController.villageByPK);
+
+// router.get('/village/query',villageController.villageFilteredData);
+
+router.put('/village/:id',villageController.updatedvillagedata);
+
+router.delete('/village/:id',villageController.deletedvillagedata);
+
+router.get('/paginatedData',villageController.allvillageData);
+
+module.exports = router;
