@@ -187,30 +187,13 @@ const deletedWardData = async (req,res) =>{
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
         }
         await transaction.commit();
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{updatedDistricts:result.data.updatedDistricts},'Success','ward Data Deleted Successfully'));
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{updatedDistricts:result.data.updatedDistricts},'Success','ward Deleted Successfully'));
     }
     catch(err){
         console.log('Error in deleting wards',err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while deleting wards'));
     }
 };
-
-// /**
-//  * @swagger
-//  * /warddata:
-//  *   get:
-//  *     summary: Get all wards
-//  *     description: Retrieve a list of all wards.
-//  *     responses:
-//  *       200:
-//  *         description: A JSON array of ward objects
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: array
-//  *               items:
-//  *                  $ref : '#components/schemas/Ward'
-//  */
 
 /**
  * @swagger

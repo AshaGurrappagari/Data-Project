@@ -195,24 +195,6 @@ const deletedDistrictsData = async (req,res) =>{
     }
 };
 
-// /**
-//  * @swagger
-//  * /districtdata:
-//  *   get:
-//  *     summary: Get all districts
-//  *     description: Retrieve a list of all Districts.
-//  *     responses:
-//  *       200:
-//  *         description: A JSON array of District objects
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: array
-//  *               items:
-//  *                  $ref : '#components/schemas/District'
-//  */
-
-
 /**
  * @swagger
  * /districtData:

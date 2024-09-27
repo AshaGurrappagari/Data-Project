@@ -199,19 +199,6 @@ const villageByPK = async (req,res)=>{
     }
 };
 
-// const villageFilteredData = async (req,res)=>{
-//     try{
-//         const result = await villageService.villageDatafiltered(req,res);
-//         if(result.err){
-//             return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage));
-//         }
-//         return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},'Success','villages fetched successfully'));
-//     }
-//     catch(err){
-//         console.log('error in fetching village',err);
-//         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching villages'));
-//     }
-// };
 
 /**
  * @swagger

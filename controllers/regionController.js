@@ -57,37 +57,6 @@ const regionnew = async (req,res)=>{
     }
 };
 
-// /**
-//  * @swagger
-//  * /regiondata:
-//  *   get:
-//  *     summary: Get all regions
-//  *     description: Retrieve a list of all regions.
-//  *     responses:
-//  *       200:
-//  *         description: A JSON array of region objects
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: array
-//  *               items:
-//  *                  $ref : '#components/schemas/Region'
-//  */
-
-// const regionnewdata = async (req,res) =>{
-//     try{
-//         const result = await regionService.allregion(req);
-//         if(result.err){
-//             return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage));
-//         }
-//         return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{regionD:result.data},'Success','Regions fetched successfully'));
-//     }
-//     catch(err){
-//         console.log('error in fetching region',err);
-//         return res.status(SERVER_ERROR).json(response.errorWith(err.message,'An error occurred while fetching regions'));
-//     }
-// };
-
 /**
  * @swagger
  * /regionbyPk/{id}:
