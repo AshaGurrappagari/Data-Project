@@ -27,17 +27,10 @@ const customException = require('../errorHandler/customException');
 
 /**
  * @swagger
- * /ward/{id}:
+ * /ward:
  *   post:
  *     summary: Insert ward Data
  *     description: Insert ward data into the database
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: The ID of the district to which this ward belongs
- *         schema:
- *           type: integer
  *     requestBody: 
  *       required: true
  *       content:
@@ -49,6 +42,11 @@ const customException = require('../errorHandler/customException');
  *                 type: string
  *                 description: Name of the ward
  *                 example: Tirupati
+ *               district:
+ *                 type: string
+ *                 description: Name of the ward
+ *                 example: Andhra Pradesh
+
  *     responses:
  *       200:
  *         description: Data inserted successfully
@@ -202,6 +200,11 @@ const deletedWardData = async (req,res) =>{
  *     summary: Get ward data with pagination
  *     description: Retrieve paginated ward data with sorting options.
  *     parameters:
+ *         - in: query
+ *           name: search
+ *           description: search with ward name.
+ *           schema: 
+ *              type: string
  *         - in: query
  *           name: pageNumber
  *           description: The page number to retrieve (starting from 1).

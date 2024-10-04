@@ -71,25 +71,10 @@ const customException = require('../errorHandler/customException');
 
 /**
  * @swagger
- * /village/{id}/{districtId}/{wardId}:
+ * /village:
  *   post:
  *     summary: Insert ward Data
  *     description: Insert ward data into the database
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: The ID of the region to which this district belongs
- *       - in: path
- *         name: districtId
- *         required: true
- *         description: The ID of the district to which this ward belongs
- *       - in: path
- *         name: wardId
- *         required: true
- *         description: The ID of the ward to which this village belongs
- *         schema:
- *           type: integer
  *     requestBody: 
  *       required: true
  *       content:
@@ -156,6 +141,7 @@ const villagenew = async (req,res)=>{
         }
     }
     catch(err){
+        await transaction.rollback();
         console.log('error in giving village',err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while creating villages'));
     }
@@ -191,7 +177,7 @@ const villageByPK = async (req,res)=>{
         if(result.err){
             return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage));
         }
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{activeVillage:result.data.activeVillage},'Success','villages fetched successfully'));
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{village:result.data},'Success','villages fetched successfully'));
     }
     catch(err){
         console.log('error in fetching village',err);
@@ -317,6 +303,11 @@ const deletedvillagedata = async (req,res) => {
  *     description: Retrieve paginated village data with sorting options.
  *     parameters:
  *         - in: query
+ *           name: search
+ *           description: search with village name
+ *           schema: 
+ *              type: string
+ *         - in: query
  *           name: pageNumber
  *           description: The page number to retrieve (starting from 1).
  *           schema: 
@@ -328,7 +319,7 @@ const deletedvillagedata = async (req,res) => {
  *              type: integer
  *         - in: query
  *           name: orderBy
- *           description: The column to order by (e.g., 'village_id').
+ *           description: The column to order by (e.g., 'village').
  *           schema: 
  *              type: string
  *         - in: query
@@ -356,26 +347,8 @@ const deletedvillagedata = async (req,res) => {
  *                   type: integer
  *       404:
  *         description: The requested page does not exist
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 displayMessage:
- *                   type: string
  *       500:
  *         description: An internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 displayMessage:
- *                   type: string
  */
 
 const allvillageData = async (req, res) => {
@@ -399,7 +372,113 @@ const allvillageData = async (req, res) => {
     }
 };
 
+/**
+ * @swagger
+ * /villageName:
+ *   get:
+ *     summary: fetch village,ward,region for each villageName
+ *     description: retrive village,ward,region data
+ *     responses:
+ *       200:
+ *         description: Data inserted successfully
+ */
 
 
-module.exports = {villagenew,villageByPK,updatedvillagedata,deletedvillagedata,allvillageData};
+const databyVllageName = async (req, res) => {
+    try {
+        const result = await villageService.fetchVillageName(req);
+
+        if (result.err) {
+            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, result.err.displayMessage));
+        }
+
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, { data: result.data }, 'Success', 'Villages fetched successfully'));
+    } catch (err) {
+        console.log('Error in fetching villages:', err);
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching villages'));
+    }
+};
+
+/**
+ * @swagger
+ * /villageByWard:
+ *   get:
+ *     summary: count the no. of villages in each ward
+ *     description: Retrieve village data
+ *     responses:
+ *       200:
+ *         description: A JSON array of Village object
+ */
+
+const villagebyward = async (req, res) => {
+    try {
+        const result = await villageService.villagesbyward(req);
+
+        if (result.err) {
+            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, result.err.displayMessage));
+        }
+
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, { data: result.data }, 'Success', 'Villages fetched successfully'));
+    } catch (err) {
+        console.log('Error in fetching villages:', err);
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching villages'));
+    }
+};
+
+/**
+ * @swagger
+ * /villageregion:
+ *   get:
+ *     summary: fetch region names where village is present
+ *     description: Retrieve region data 
+ *     responses:
+ *       200:
+ *         description: A JSON array of Village object
+ */
+
+const fetchRegions = async (req,res)=>{
+    try {
+        const result = await villageService.fetchRegion(req);
+
+        if (result.err) {
+            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, result.err.displayMessage));
+        }
+
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, { data: result.data }, 'Success', 'Villages fetched successfully'));
+    } 
+    catch (err) {
+        console.log('Error in fetching villages:', err);
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching villages'));
+    }
+}
+
+/**
+ * @swagger
+ * /wardsByVillage:
+ *   get:
+ *     summary: fetch ward names that have morethan 1 village.
+ *     description: Retrieve region data 
+ *     responses:
+ *       200:
+ *         description: A JSON array of Village object
+ */
+
+const fetchWardsData = async (req,res) => {
+    try{
+        const result = await villageService.fetchWards(req);
+
+        if (result.err) {
+            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, result.err.displayMessage));
+        }
+
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, { data: result.data }, 'Success', 'Villages fetched successfully'));
+    }
+    catch (err) {
+        console.log('Error in fetching villages:', err);
+        return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching villages'));
+    }
+}
+
+
+module.exports = {villagenew,villageByPK,updatedvillagedata,deletedvillagedata,allvillageData,databyVllageName,villagebyward,fetchRegions,fetchWardsData};
 

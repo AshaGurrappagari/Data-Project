@@ -27,17 +27,10 @@ const customException = require('../errorHandler/customException');
 
 /**
  * @swagger
- * /district/{id}:
+ * /district:
  *   post:
  *     summary: Insert District Data
  *     description: Insert district data into the database
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: The ID of the region to which this district belongs
- *         schema:
- *           type: integer
  *     requestBody: 
  *       required: true
  *       content:
@@ -49,6 +42,11 @@ const customException = require('../errorHandler/customException');
  *                 type: string
  *                 description: Name of the district
  *                 example: Andhra Pradesh
+ *               region:
+ *                 type: string
+ *                 description: Name of the district
+ *                 example: India
+
  *     responses:
  *       200:
  *         description: Data inserted successfully
@@ -202,6 +200,11 @@ const deletedDistrictsData = async (req,res) =>{
  *     summary: Get district data with pagination
  *     description: Retrieve paginated district data with sorting options.
  *     parameters:
+ *         - in: query
+ *           name: search
+ *           description: search with district name.
+ *           schema: 
+ *              type: string
  *         - in: query
  *           name: pageNumber
  *           description: The page number to retrieve (starting from 1).

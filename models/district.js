@@ -26,8 +26,8 @@ District.belongsTo(Region,{
     foreignKey:{
         name:'regionId',
         allowNull:false,
-        as:'region'
     },
+    as:'region',
     onDelete:'CASCADE',
     onUpdate:'CASCADE'
 });

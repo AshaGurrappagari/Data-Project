@@ -5,7 +5,7 @@ const villageController = require('../controllers/villageController');
 
 router.get('/village',(req,res)=>{
     res.send(`<h1>Welcome to ward page</h1>
-        <form action='/village/1/1/1' method='post' >
+        <form action='/village' method='post' >
         <label for='region'>region:</label>
         <input type='text' id = 'region' name='region'/></br>
         <label for='district'>district:</label>
@@ -31,11 +31,9 @@ router.get('/village',(req,res)=>{
         `);
 });
 
-router.post('/village/:id/:districtId/:wardId', villageController.villagenew);
+router.post('/village', villageController.villagenew);
 
 router.get('/village/:id', villageController.villageByPK);
-
-// router.get('/village/query',villageController.villageFilteredData);
 
 router.put('/village/:id',villageController.updatedvillagedata);
 
@@ -43,4 +41,14 @@ router.delete('/village/:id',villageController.deletedvillagedata);
 
 router.get('/paginatedData',villageController.allvillageData);
 
+router.get('/villageName', villageController.databyVllageName);
+
+router.get('/villageByWard', villageController.villagebyward);
+
+router.get('/villageregion', villageController.fetchRegions);
+
+router.get('/wardsByVillage', villageController.fetchWardsData);
+
 module.exports = router;
+
+//change post request 

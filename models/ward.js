@@ -22,14 +22,14 @@ const Ward = sequelize.define('Ward',{
     timestamps: true 
 });
 
-Ward.belongsTo(District,{
-    foreignKey:{
-        name:'districtId',
-        allowNull:false,
-        as:'district'
+Ward.belongsTo(District, {
+    foreignKey: {
+        name: 'districtId',
+        allowNull: false
     },
-    onDelete:'CASCADE',
-    onUpdate:'CASCADE'
+    as: 'district',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 module.exports=Ward;

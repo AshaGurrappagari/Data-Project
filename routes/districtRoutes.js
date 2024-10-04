@@ -5,7 +5,7 @@ const districtController = require('../controllers/districtController');
 router.get('/district', (req, res) => {
     res.send(`
         <h1>Welcome to the District page</h1>
-        <form action='/district/1' method='post'>
+        <form action='/district' method='post'>
             <label for='district'>District:</label>
             <input type='text' id='district' name='district'/><br/>
             <input type='submit' value='Submit'/>
@@ -13,7 +13,7 @@ router.get('/district', (req, res) => {
     `);
 });
 
-router.post('/district/:id', districtController.districtnew);
+router.post('/district', districtController.districtnew);
 
 router.get('/districtData',districtController.alldistrictsData);
 

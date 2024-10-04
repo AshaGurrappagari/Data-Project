@@ -185,6 +185,11 @@ const deletedRegiondata = async (req,res) => {
  *     description: Retrieve paginated region data with sorting options.
  *     parameters:
  *         - in: query
+ *           name: search
+ *           description: search with region name
+ *           schema: 
+ *              type: string
+ *         - in: query
  *           name: pageNumber
  *           description: The page number to retrieve (starting from 1).
  *           schema: 
