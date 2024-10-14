@@ -1,9 +1,9 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Region = require('./region');
-const District = require('./district');
-const Ward = require('./ward');
-
+const Region = require('./region.model');
+const District = require('./district.model');
+const Ward = require('./ward.model');
+//constants
 const Village = sequelize.define('Village', {
     village_id: {
         type: DataTypes.INTEGER,

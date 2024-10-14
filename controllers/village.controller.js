@@ -1,9 +1,10 @@
-const sequelize = require('../config/database');
-const villageService= require('../services/villageservice');
-const {SUCCESS_CODE,NOT_FOUND,SERVER_ERROR,BAD_REQUEST} = require('../utils/statusCode');
-const response = require('../errorHandler/response');
 const customException = require('../errorHandler/customException');
+const response = require('../errorHandler/response');
+const {SUCCESS_CODE,NOT_FOUND,SERVER_ERROR,BAD_REQUEST} = require('../utils/statusCode');
+const sequelize = require('../config/database');
+const villageService= require('../services/village.service');
 
+module.exports = {
 /**
  * @swagger
  *  components:
@@ -43,7 +44,7 @@ const customException = require('../errorHandler/customException');
  *                      type: integer
  *                      description: Minimum Last value
  *                      example: 42000
- *                  maxLast:
+ *                  maxLast:result
  *                      type: integer
  *                      description: Maximum Last value
  *                      example: 42000
@@ -127,25 +128,23 @@ const customException = require('../errorHandler/customException');
  *         description: Data inserted successfully
  */
 
-const villagenew = async (req,res)=>{
+ villagenew: async function(req,res) {
     try{
         const transaction = await sequelize.transaction();
-        const result = await villageService.Datavillage(req,transaction);
-        if(result.err){
+        const result = await villageService.Datavillage(req.body,transaction);
+        if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
         }
-        else{
-            await transaction.commit();
-            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{villageD:result.data},'Success','villages created successfully'));
-        }
+        await transaction.commit();
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, { village: result.data }, result.message, result.displayMessage));
     }
     catch(err){
         await transaction.rollback();
         console.log('error in giving village',err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while creating villages'));
     }
-};
+},
 
 /**
  * @swagger
@@ -171,20 +170,17 @@ const villagenew = async (req,res)=>{
  *                  $ref : '#components/schemas/Village'
  */
 
-const villageByPK = async (req,res)=>{
+villageByPK: async function(req,res){
     try{
-        const result = await villageService.villageByPk(req,res);
-        if(result.err){
-            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage));
-        }
+        const result = await villageService.villageByPk(req.params.id);
+        if(result?.err) return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage));
         return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{village:result.data},'Success','villages fetched successfully'));
     }
     catch(err){
         console.log('error in fetching village',err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching villages'));
     }
-};
-
+},
 
 /**
  * @swagger
@@ -243,22 +239,22 @@ const villageByPK = async (req,res)=>{
  *                   example: "Village not found."
  */
 
-const updatedvillagedata = async (req,res) => {
+updatedvillagedata:async function (req,res) {
     try{
         const transaction = await sequelize.transaction();
-        const result = await villageService.updateVillage(req,transaction);
-        if(result.err){
+        const result = await villageService.updateVillage(req.body.village,req.params.id,transaction);
+        if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
         }
         await transaction.commit();
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{updatedvillages:result.data.updatedvillages},'Success','Village Updated Successfully'));
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{updatedvillages:result.data},'Success','Village Updated Successfully'));
     }
     catch(err){
         console.log('Error in updating village data',err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching villages'));
     }
-};
+},
 
 /**
  * @swagger
@@ -278,22 +274,22 @@ const updatedvillagedata = async (req,res) => {
  *         description: Village data deleted successfully.
  */
 
-const deletedvillagedata = async (req,res) => {
+deletedvillagedata: async function(req,res) {
     try{
         const transaction = await sequelize.transaction();
-        const result = await villageService.deletevillage(req,transaction);
-        if(result.err){
+        const result = await villageService.deletevillage(req.params.id,transaction);
+        if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
         }
         await transaction.commit();
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{deletedvillag:result.data.deletedvillages},'Success','Village deleted Successfully'));
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{deletedvillag:result.data},'Success','Village deleted Successfully'));
     }
     catch(err){
         console.log('Error in deleting village data',err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching villages'));
     }
-};
+},
 
 /**
  * @swagger
@@ -351,26 +347,16 @@ const deletedvillagedata = async (req,res) => {
  *         description: An internal server error
  */
 
-const allvillageData = async (req, res) => {
+allvillageData:async function(req, res) {
     try {
         const result = await villageService.allvillages(req);
-
-        if (result.err) {
-            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, 'Failed to fetch villages'));
-        }
-
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, {
-            villages: result.data.villages, 
-            totalItems: result.data.totalItems,
-            totalPages: result.data.totalPages,
-            currentPage: result.data.currentPage
-        }, 'Success', 'Villages fetched successfully'));
-
+        if (result?.err) return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, 'Failed to fetch villages'));
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, {villages: result.data }, 'Success', 'Villages fetched successfully'));
     } catch (err) {
         console.log('Error in fetching villages', err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching villages'));
     }
-};
+},
 
 /**
  * @swagger
@@ -384,20 +370,16 @@ const allvillageData = async (req, res) => {
  */
 
 
-const databyVllageName = async (req, res) => {
+databyVllageName : async function(req, res) {
     try {
         const result = await villageService.fetchVillageName(req);
-
-        if (result.err) {
-            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, result.err.displayMessage));
-        }
-
+        if (result?.err) return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, result.err.displayMessage));
         return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, { data: result.data }, 'Success', 'Villages fetched successfully'));
     } catch (err) {
         console.log('Error in fetching villages:', err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching villages'));
     }
-};
+},
 
 /**
  * @swagger
@@ -410,20 +392,17 @@ const databyVllageName = async (req, res) => {
  *         description: A JSON array of Village object
  */
 
-const villagebyward = async (req, res) => {
+villagebyward : async function (req, res) {
     try {
         const result = await villageService.villagesbyward(req);
-
-        if (result.err) {
-            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, result.err.displayMessage));
-        }
-
+        if (result?.err) return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, result.err.displayMessage));
         return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, { data: result.data }, 'Success', 'Villages fetched successfully'));
-    } catch (err) {
+    } 
+    catch (err) {
         console.log('Error in fetching villages:', err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching villages'));
     }
-};
+},
 
 /**
  * @swagger
@@ -436,21 +415,17 @@ const villagebyward = async (req, res) => {
  *         description: A JSON array of Village object
  */
 
-const fetchRegions = async (req,res)=>{
+fetchRegions : async function (req,res){
     try {
         const result = await villageService.fetchRegion(req);
-
-        if (result.err) {
-            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, result.err.displayMessage));
-        }
-
+        if (result?.err) return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, result.err.displayMessage));
         return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, { data: result.data }, 'Success', 'Villages fetched successfully'));
     } 
     catch (err) {
         console.log('Error in fetching villages:', err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching villages'));
     }
-}
+},
 
 /**
  * @swagger
@@ -463,14 +438,10 @@ const fetchRegions = async (req,res)=>{
  *         description: A JSON array of Village object
  */
 
-const fetchWardsData = async (req,res) => {
+fetchWardsData : async function (req,res){
     try{
         const result = await villageService.fetchWards(req);
-
-        if (result.err) {
-            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, result.err.displayMessage));
-        }
-
+        if (result?.err) return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, result.err.displayMessage));
         return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, { data: result.data }, 'Success', 'Villages fetched successfully'));
     }
     catch (err) {
@@ -478,7 +449,4 @@ const fetchWardsData = async (req,res) => {
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching villages'));
     }
 }
-
-
-module.exports = {villagenew,villageByPK,updatedvillagedata,deletedvillagedata,allvillageData,databyVllageName,villagebyward,fetchRegions,fetchWardsData};
-
+}

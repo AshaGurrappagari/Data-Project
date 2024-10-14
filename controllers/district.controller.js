@@ -1,9 +1,10 @@
-const sequelize = require('../config/database');
-const response = require('../errorHandler/response');
-const districtService = require('../services/districtservice');
-const {SUCCESS_CODE,SERVER_ERROR,BAD_REQUEST, NOT_FOUND} = require('../utils/statusCode');
 const customException = require('../errorHandler/customException');
+const districtService = require('../services/district.service');
+const response = require('../errorHandler/response');
+const sequelize = require('../config/database');
+const {SUCCESS_CODE,SERVER_ERROR,BAD_REQUEST, NOT_FOUND, DATA_ALREADY_EXISTS} = require('../utils/statusCode');
 
+module.exports = {
 /**
  * @swagger
  *  components:
@@ -52,17 +53,17 @@ const customException = require('../errorHandler/customException');
  *         description: Data inserted successfully
  */
 
-const districtnew = async (req,res)=>{
+districtnew : async function (req,res){
     try{
         const transaction = await sequelize.transaction();
-        const result = await districtService.districtData(req,transaction);
-        if(result.err){
+        const result = await districtService.districtData(req.body,transaction);
+        if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
         }
         else{
             await transaction.commit();
-            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{districtD:result.data},'Success','districts created successfully'));
+            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, { regionD: result.data }, result.message, result.displayMessage));
         }
     }
     catch(err){
@@ -70,7 +71,7 @@ const districtnew = async (req,res)=>{
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while creating districts'));
 
     }
-};
+},
 
 /**
  * @swagger
@@ -95,10 +96,10 @@ const districtnew = async (req,res)=>{
  */
 
 
-const districtDataByPk = async (req,res) => {
+districtDataByPk : async function(req,res) {
     try{
-        const result = await districtService.districtByPk(req);
-        if(result.err){
+        const result = await districtService.districtByPk(req.params.id);
+        if(result?.err){
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
         }
         return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{districtD:result.data},'Success','districts fetched successfully'));
@@ -107,7 +108,7 @@ const districtDataByPk = async (req,res) => {
         console.log('error in fetching district',err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while fetching districts'));
     }
-};
+},
 
 /**
  * @swagger
@@ -140,11 +141,11 @@ const districtDataByPk = async (req,res) => {
  */
 
 
-const updatedDistrictData = async (req,res) =>{
+updatedDistrictData : async function(req,res) {
     try{
         const transaction = await sequelize.transaction();
-        const result = await districtService.updateDistricts(req,transaction);
-        if(result.err){
+        const result = await districtService.updateDistricts(req.params.id,req.body.district,transaction);
+        if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
         }
@@ -155,7 +156,7 @@ const updatedDistrictData = async (req,res) =>{
         console.log('Error in updating district',err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while updating districts'));
     }
-};
+},
 
 /**
  * @swagger
@@ -176,11 +177,11 @@ const updatedDistrictData = async (req,res) =>{
  */
 
 
-const deletedDistrictsData = async (req,res) =>{
+deletedDistrictsData : async function(req,res) {
     try{
         const transaction = await sequelize.transaction();
-        const result = await districtService.deleteDistrict(req,transaction);
-        if(result.err){
+        const result = await districtService.deleteDistrict(req.params.id,transaction);
+        if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
         }
@@ -191,7 +192,7 @@ const deletedDistrictsData = async (req,res) =>{
         console.log('Error in deleting district',err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while deleting districts'));
     }
-};
+},
 
 /**
  * @swagger
@@ -267,28 +268,16 @@ const deletedDistrictsData = async (req,res) =>{
  *                   type: string
  */
 
-const alldistrictsData = async (req,res) => {
+alldistrictsData : async function(req,res)  {
     try {
         const result = await districtService.alldistricts(req);
-
-        if (result.err) {
-            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, 'Failed to fetch districts'));
-        }
-
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, {
-            districts: result.data.districts, 
-            totalItems: result.data.totalItems,
-            totalPages: result.data.totalPages,
-            currentPage: result.data.currentPage
-        }, 'Success', 'districts fetched successfully'));
-
+        if (result?.err) return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, 'Failed to fetch districts'));
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, {districts: result.data}, 'Success', 'districts fetched successfully'));
     } catch (err) {
         console.log('Error in fetching districts', err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching districts'));
     }
+}
+
 };
-
-
-
-module.exports = {districtnew,districtDataByPk,updatedDistrictData,deletedDistrictsData,alldistrictsData};
 

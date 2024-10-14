@@ -1,9 +1,10 @@
-const sequelize = require('../config/database');
 const customException = require('../errorHandler/customException');
+const regionService = require('../services/region.service');
 const response = require('../errorHandler/response');
-const regionService = require('../services/regionservice');
+const sequelize = require('../config/database');
 const {SUCCESS_CODE,NOT_FOUND,SERVER_ERROR,BAD_REQUEST} = require('../utils/statusCode');
 
+module.exports = {
 /**
  * @swagger
  *  components:
@@ -38,24 +39,24 @@ const {SUCCESS_CODE,NOT_FOUND,SERVER_ERROR,BAD_REQUEST} = require('../utils/stat
  *         description: Data inserted successfully
  */
 
-const regionnew = async (req,res)=>{
+regionnew : async function(req,res){
     try{
         const transaction = await sequelize.transaction();
-        const result = await regionService.regionData(req,transaction);
-        if(result.err){
+        const result = await regionService.regionData(req.body,transaction);
+        if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
         }
         else{
             await transaction.commit();
-            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{regionD:result.data},'Success','Regions created successfully'));
+            return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, { regionD: result.data },result.message , result.displayMessage));
         }
     }
     catch(err){
         console.log('error in giving region',err);
         return res.status(SERVER_ERROR).json(response.errorWith(err.message,'An error occurred while creating regions'));
     }
-};
+},
 
 /**
  * @swagger
@@ -81,19 +82,17 @@ const regionnew = async (req,res)=>{
  *                  $ref : '#components/schemas/Region'
  */
 
-const regionDataByPk = async (req,res) => {
+regionDataByPk : async function (req,res) {
     try{
-        const result = await regionService.regionByPk(req);
-        if(result.err){
-            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage));
-        }
+        const result = await regionService.regionByPk(req.params.id);
+        if(result?.err) return res.status(NOT_FOUND).json(customException.error(NOT_FOUND,result.err.message,result.err.displayMessage));
         return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{regionD:result.data},'Success','Regions fetched successfully'));
     }
     catch(err){
         console.log('error in fetching region',err);
         return res.status(SERVER_ERROR).json(response.errorWith(err.message,'An error occurred while fetching regions'));
     }
-};
+},
 
 /**
  * @swagger
@@ -125,22 +124,22 @@ const regionDataByPk = async (req,res) => {
  *         description: region data updated successfully.
  */
 
-const updatedRegiondata = async (req,res)=> {
+updatedRegiondata : async function (req,res) {
     try{
         const transaction = await sequelize.transaction();
-        const result = await regionService.updateRegion(req,transaction);
-        if(result.err){
+        const result = await regionService.updateRegion(req.params.id,req.body.region,transaction);
+        if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
         }
         await transaction.commit();
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{updatedRegions:result.data.updatedRegions},'Success','Region updated Successfully'));
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE,{updatedRegions:result.data},'Success','Region updated Successfully'));
     }
     catch(err){
         console.log('Error in updating region data');
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while updating regions'));
     }
-};
+},
 
 /**
  * @swagger
@@ -160,11 +159,11 @@ const updatedRegiondata = async (req,res)=> {
  *         description: region data deleted successfully.
  */
 
-const deletedRegiondata = async (req,res) => {
+deletedRegiondata : async function(req,res) {
     try{
         const transaction = await sequelize.transaction();
         const result = await regionService.deleteRegion(req,transaction);
-        if(result.err){
+        if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
         }
@@ -175,7 +174,7 @@ const deletedRegiondata = async (req,res) => {
         console.log('Error in deleting region data',err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR,err.message,'An error occurred while deleting regions'));
     }
-};
+},
 
 /**
  * @swagger
@@ -251,28 +250,18 @@ const deletedRegiondata = async (req,res) => {
  *                   type: string
  */
 
-const allregionData = async (req, res) => {
+allregionData : async function(req, res) {
     try {
         const result = await regionService.allregion(req);
-
-        if (result.err) {
-            return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, 'Failed to fetch regions'));
-        }
-
-        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, {
-            regions: result.data.regions, 
-            totalItems: result.data.totalItems,
-            totalPages: result.data.totalPages,
-            currentPage: result.data.currentPage
-        }, 'Success', 'regions fetched successfully'));
-
+        if (result?.err) return res.status(NOT_FOUND).json(customException.error(NOT_FOUND, result.err.message, 'Failed to fetch regions'));
+        return res.status(SUCCESS_CODE).json(response.successWith(SUCCESS_CODE, {regions:result.data}, 'Success', 'regions fetched successfully'));
     } catch (err) {
         console.log('Error in fetching regions', err);
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching regions'));
     }
-};
+}
 
-module.exports = {regionnew,allregionData,regionDataByPk,updatedRegiondata,deletedRegiondata};
+}
 
 
 //create 1 branch from main

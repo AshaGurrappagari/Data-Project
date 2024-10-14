@@ -2,16 +2,27 @@ const express = require('express');
 const dotenv = require('dotenv');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const cors = require('cors');
+
+const router = express.Router();
 
 dotenv.config();
 
 const sequelize = require('./config/database');
-const router = require('./routes/regionRoutes');
-const wardrouter = require('./routes/wardRoutes');
-const districtrouter = require('./routes/districtRoutes');
-const villagerouter = require('./routes/villageRoutes');
+
+require('./routes/region.routes')(router);
+require('./routes/ward.routes')(router);
+require('./routes/district.routes')(router);
+require('./routes/village.routes')(router);
 
 const app = express();
+const server = require("http").Server(app);
+
+const corsOptions = {
+	origin: '*'
+};
+
+app.use (cors(corsOptions));
 
 const options = {
     definition: {
@@ -22,7 +33,7 @@ const options = {
         },
         servers: [
             {
-                url: 'http://localhost:3000/'
+                url: 'http://localhost:3000/api'
             }
         ]
     },
@@ -30,20 +41,16 @@ const options = {
 };
 
 const swaggerSpec = swaggerJsdoc(options);
-
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/', router);
-app.use(districtrouter);
-app.use(wardrouter);
-app.use(villagerouter);
+app.use('/api',router)
 
 sequelize.sync()
     .then(() => {
-        app.listen(process.env.PORT || 3000, () => console.log(`Connected to port ${process.env.PORT || 3000}`));
+        server.listen(process.env.PORT || 3000, () => console.log(`Connected to port ${process.env.PORT || 3000}`));
     })
     .catch(err => {
         console.log('Database not synced', err);
