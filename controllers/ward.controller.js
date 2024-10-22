@@ -30,8 +30,17 @@ module.exports = {
  * @swagger
  * /ward:
  *   post:
+ *     tags:
+ *       - "Ward Service"
  *     summary: Insert ward Data
  *     description: Insert ward data into the database
+ *     parameters:
+ *       - in: header
+ *         name: x-access-token
+ *         description: Token to be passed as a header.
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody: 
  *       required: true
  *       content:
@@ -51,12 +60,18 @@ module.exports = {
  *     responses:
  *       200:
  *         description: Data inserted successfully
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 wardnew : async function(req,res){
     try{
         const transaction = await sequelize.transaction();
-        const result = await wardService.wardData(req.body,transaction);
+        const result = await wardService.wardData(req,transaction);
         if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
@@ -76,9 +91,17 @@ wardnew : async function(req,res){
  * @swagger
  * /wardbyPk/{id}:
  *   get:
+ *     tags:
+ *       - "Ward Service"
  *     summary: get ward data with primary key
  *     description: Retrieve ward data with primary key.
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: path
  *           name: id
  *           required: true
@@ -94,6 +117,12 @@ wardnew : async function(req,res){
  *               type: array
  *               items:
  *                  $ref : '#components/schemas/Ward'
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 wardDataByPk : async function (req,res) {
@@ -112,9 +141,17 @@ wardDataByPk : async function (req,res) {
  * @swagger
  * /ward/{id}:
  *   put:
+ *     tags:
+ *       - "Ward Service"
  *     summary: update ward data with wardId
  *     description: Soft update ward data with wardId
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: path
  *           name: id
  *           required: true
@@ -136,6 +173,12 @@ wardDataByPk : async function (req,res) {
  *     responses:
  *       200:
  *         description: ward data updated successfully.
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 
@@ -160,9 +203,17 @@ updatedWardData : async function(req,res) {
  * @swagger
  * /ward/{id}:
  *   delete:
+ *     tags:
+ *       - "Ward Service"
  *     summary: Delete ward data with wardId
  *     description: Soft Delete ward data with wardId
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: path
  *           name: id
  *           required: true
@@ -172,6 +223,12 @@ updatedWardData : async function(req,res) {
  *     responses:
  *       200:
  *         description: ward data deleted successfully.
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 
@@ -196,9 +253,17 @@ deletedWardData : async function(req,res) {
  * @swagger
  * /wardData:
  *   get:
+ *     tags:
+ *       - "Ward Service"
  *     summary: Get ward data with pagination
  *     description: Retrieve paginated ward data with sorting options.
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: query
  *           name: search
  *           description: search with ward name.

@@ -1,66 +1,55 @@
 const customException = require('../errorHandler/customException');
 const District = require('../models/district.model');
-const { NOT_FOUND, BAD_REQUEST, DATA_ALREADY_EXISTS, SUCCESS_CODE } = require('../utils/statusCode');
+const { NOT_FOUND, BAD_REQUEST, DATA_ALREADY_EXISTS} = require('../utils/statusCode');
 const {Op} = require('sequelize');
 const Region = require('../models/region.model');
 const sequelize = require('../config/database');
 const villageModel = require('../models/village.model');
-const villageSchema = require('../joidata/village.schema');
+// const villageSchema = require('../joidata/village.schema');
 const Ward = require('../models/ward.model');
 
 module.exports = {
     Datavillage : async function (req, t){
         try {
-            const validatedData = await villageSchema.validateAsync(req);
-            // checking if provided region, district, ward are present in database or not
+            console.log('Incoming request body:', req.body);
+    
+            const {region,district,ward,village,minCurrent,maxCurrent,minLast,maxLast,crop,variety} = req.body;
             const [foundRegion, foundDistrict, foundWard] = await Promise.all([
-                Region.findOne({ where: { region: validatedData.region } }),
-                District.findOne({ where: { district: validatedData.district } }),
-                Ward.findOne({ where: { ward: validatedData.ward } })
+                Region.findOne({ where: { region: region } }),
+                District.findOne({ where: { district: district } }),
+                Ward.findOne({ where: { ward: ward } })
             ]);
             if (!foundRegion) throw customException.error(NOT_FOUND, 'Region not found', 'Region not found');
             else if (!foundDistrict) throw customException.error(NOT_FOUND, 'District not found', 'District not found');
             else if (!foundWard) throw customException.error(NOT_FOUND, 'Ward not found', 'Ward not found');
-    
-            // checks if data is already present with same id's in database and if not it will create one
-            const [newVillage, created] = await villageModel.findOrCreate({
-                where: {
+            const created = await villageModel.findOne({
+                where:{
                     regionId: foundRegion.region_id,  
                     districtId: foundDistrict.district_id,
                     wardId: foundWard.ward_id,
-                    village: validatedData.village
-                },
-                defaults: {
-                    regionId: foundRegion.region_id,  
-                    districtId: foundDistrict.district_id,
-                    wardId: foundWard.ward_id,
-                    regionName: validatedData.region,    
-                    districtName: validatedData.district,
-                    wardName: validatedData.ward,
-                    village: validatedData.village,
-                    minCurrent: validatedData.minCurrent,
-                    maxCurrent: validatedData.maxCurrent,
-                    minLast: validatedData.minLast,
-                    maxLast: validatedData.maxLast,
-                    crop: validatedData.crop,
-                    variety: validatedData.variety
-                },
-                transaction: t  
-            });
+                    village: village
+                }
+            })
+            if(created) return {data:created, httpStatusCode: DATA_ALREADY_EXISTS,message: 'Please provide a different village name',displayMessage: 'Village data already Created'}
+
+            const newVillage = await villageModel.create({
+                regionId: foundRegion.region_id,  
+                districtId: foundDistrict.district_id,
+                wardId: foundWard.ward_id,
+                regionName: region,    
+                districtName: district,
+                wardName: ward,
+                village: village,
+                minCurrent: minCurrent,
+                maxCurrent: maxCurrent,
+                minLast: minLast,
+                maxLast: maxLast,
+                crop: crop,
+                variety: variety
+            },t)
              //returns data using ternary operator
-            return created
-                ? { 
-                    httpStatusCode: SUCCESS_CODE,
-                    data: newVillage ,
-                    message: 'Success',
-                    displayMessage: 'Village Created Successfully'
-                }  
-                : {
-                    httpStatusCode: DATA_ALREADY_EXISTS,
-                    data: newVillage,
-                    message: 'Please provide a different village',
-                    displayMessage: 'Village already exists'
-                };
+             if(!newVillage) throw customException.error(BAD_REQUEST,'Error while creating Village Data','Village data not Succefully created'); 
+             return {data:newVillage,message:'Created Successfully', displayMessage:'Village Created Successfully'}
             } 
         catch (err) {  
             console.error('Error in creating village:', err);
@@ -258,3 +247,20 @@ fetchVillageName : async function() {
 //ER
 //how to design my api
 
+
+
+//user table - fn,ln,email,password(encyrpted),createdat,updatedat,deletedat (if signup or not)
+//application - app.id,userid,applicationName(or)permission- (global admin,super admin, vendor),c,u,d
+
+// {
+//     "region": "India",
+//     "district": "Karnataka",
+//     "ward": "Banglore",
+//     "village": "Banshankari",
+//     "minCurrent": 42000,
+//     "maxCurrent": 42000,
+//     "minLast": 42000,
+//     "maxLast": 42000,
+//     "crop": "new crop",
+//     "variety": "new variety"
+//   }

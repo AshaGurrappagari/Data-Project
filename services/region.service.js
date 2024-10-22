@@ -1,35 +1,23 @@
 const customException = require('../errorHandler/customException');
-const { NOT_FOUND,DATA_ALREADY_EXISTS, SUCCESS_CODE} = require('../utils/statusCode');
+const { NOT_FOUND,DATA_ALREADY_EXISTS, SUCCESS_CODE, BAD_REQUEST} = require('../utils/statusCode');
 const {Op} = require('sequelize')
 const regionModel = require('../models/region.model');
-const regionSchema = require('../joidata/region.schema');
 
 module.exports = {
     // service to create region data if not present in database
     regionData : async function(req, t) {
     try {
-        const validatedData = await regionSchema.validateAsync(req);
-        // checks if data is already present in database and if not it will create one
-        const [region, created] = await regionModel.findOrCreate({
-            where: { region: validatedData.region },
-            defaults: {
-                region: validatedData.region
-            },
-            transaction: t 
-        });
-        //returns data using ternary operator
-        return created 
-            ?   {
-                    httpStatusCode: SUCCESS_CODE,
-                    data: region, 
-                    message: 'Success',
-                    displayMessage: 'Region Successfully Created' }
-                : {   
-                    httpStatusCode: DATA_ALREADY_EXISTS,
-                    data: region, 
-                    message: 'please provide a different region',
-                    displayMessage: 'Region already exists' 
-                }
+        //find or create change
+        console.log('Incoming request body:', req.body);
+        // console.log('Validated data:', req);
+
+        const { region } = req.body; 
+        const created = await regionModel.findOne({where:{region}})
+        if(created) return {data:created, httpStatusCode: DATA_ALREADY_EXISTS,message: 'Please provide a different region name',displayMessage: 'Region data already Created'}
+
+        const newRegion = await regionModel.create({region:region},t)
+        if(!newRegion) throw customException.error(BAD_REQUEST,'Error while creating Region Data','Region data not Succefully created'); 
+        return {data:newRegion,message:'Created Successfully', displayMessage:'Region Created Successfully'}
     }
     catch (err) { 
         console.log('Region data not successfully created:', err);

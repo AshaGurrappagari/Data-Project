@@ -1,7 +1,6 @@
 const customException = require('../errorHandler/customException');
 const District = require('../models/district.model');
-const districtSchema = require('../joidata/district.schema');
-const { NOT_FOUND, DATA_ALREADY_EXISTS,SUCCESS_CODE } = require('../utils/statusCode');
+const { NOT_FOUND, DATA_ALREADY_EXISTS,BAD_REQUEST } = require('../utils/statusCode');
 const {Op} = require('sequelize');
 const Region = require('../models/region.model');
 
@@ -9,36 +8,27 @@ const Region = require('../models/region.model');
     // service to create Ward data if not present in database
     districtData: async function(req, t) {
         try {
-            const validatedData = await districtSchema.validateAsync(req);
+            const { district,region } = req.body; 
             const foundRegion = await Region.findOne({
-                where: { region: validatedData.region }
+                where: { region }
             });
             if (!foundRegion) throw customException.error(NOT_FOUND, 'Region not found', 'The specified region does not exist in the database.');
-            // checks if data is already present in database and if not it will create one
-            const [newDistrict, created] = await District.findOrCreate({
-                where: {                
-                    district: validatedData.district,
+
+            const created = await District.findOne({
+                where:{
+                    district: district,
                     regionId: foundRegion.region_id,  
-                },
-                defaults: {
-                    district: validatedData.district,
+                }
+            })
+            if(created) return {data:created, httpStatusCode: DATA_ALREADY_EXISTS,message: 'Please provide a different District name',displayMessage: 'District data already Created'}
+
+            const newDistrict = await District.create({
+                    district: district,
                     regionId: foundRegion.region_id,  
-                },
-                transaction: t  
-            });
-             //returns data using ternary operator
-            return created 
-            ? {
-                httpStatusCode: SUCCESS_CODE,
-                data: newDistrict, 
-                message: 'Success',
-                displayMessage: 'District Successfully Created' }
-            : {   
-                httpStatusCode: DATA_ALREADY_EXISTS,
-                data: newDistrict, 
-                message: 'please provide a different District',
-                displayMessage: 'District already exists' 
-            }
+                },t)
+            
+            if(!newDistrict) throw customException.error(BAD_REQUEST,'Error while creating District Data','District data not Succefully created'); 
+            return {data:newDistrict,message:'Created Successfully', displayMessage:'District Created Successfully'}
         } 
         catch (err) { 
             console.log('Error in creating district data:', err);

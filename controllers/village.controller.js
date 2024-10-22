@@ -74,8 +74,17 @@ module.exports = {
  * @swagger
  * /village:
  *   post:
+ *     tags:
+ *       - "Village Service"
  *     summary: Insert ward Data
  *     description: Insert ward data into the database
+ *     parameters:
+ *       - in: header
+ *         name: x-access-token
+ *         description: Token to be passed as a header.
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody: 
  *       required: true
  *       content:
@@ -126,12 +135,19 @@ module.exports = {
  *     responses:
  *       200:
  *         description: Data inserted successfully
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
- villagenew: async function(req,res) {
-    try{
+    villagenew: async function (req, res) {
         const transaction = await sequelize.transaction();
-        const result = await villageService.Datavillage(req.body,transaction);
+
+    try{
+        const result = await villageService.Datavillage(req,transaction);
         if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
@@ -150,9 +166,17 @@ module.exports = {
  * @swagger
  * /village/{id}:
  *   get:
+ *     tags:
+ *       - "Village Service"
  *     summary: get village data with primary key
  *     description: Retrieve village data with primary key.
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: path
  *           name: id
  *           required: true
@@ -168,6 +192,12 @@ module.exports = {
  *               type: array
  *               items:
  *                  $ref : '#components/schemas/Village'
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 villageByPK: async function(req,res){
@@ -186,9 +216,17 @@ villageByPK: async function(req,res){
  * @swagger
  * /village/{id}:
  *   put:
+ *     tags:
+ *       - "Village Service"
  *     summary: Update village data
  *     description: Update the village data based on the village ID.
  *     parameters:
+ *       - in: header
+ *         name: x-access-token
+ *         description: Token to be passed as a header.
+ *         required: true
+ *         schema:
+ *            type: string
  *       - in: path
  *         name: id
  *         required: true
@@ -237,6 +275,10 @@ villageByPK: async function(req,res){
  *                 message:
  *                   type: string
  *                   example: "Village not found."
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 updatedvillagedata:async function (req,res) {
@@ -260,9 +302,17 @@ updatedvillagedata:async function (req,res) {
  * @swagger
  * /village/{id}:
  *   delete:
+ *     tags:
+ *       - "Village Service"
  *     summary: Delete village data with villageId
  *     description: Soft Delete village data with villageId
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: path
  *           name: id
  *           required: true
@@ -272,6 +322,12 @@ updatedvillagedata:async function (req,res) {
  *     responses:
  *       200:
  *         description: Village data deleted successfully.
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 deletedvillagedata: async function(req,res) {
@@ -295,9 +351,17 @@ deletedvillagedata: async function(req,res) {
  * @swagger
  * /paginatedData:
  *   get:
+ *     tags:
+ *       - "Village Service"
  *     summary: Get village data with pagination
  *     description: Retrieve paginated village data with sorting options.
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: query
  *           name: search
  *           description: search with village name
@@ -343,8 +407,12 @@ deletedvillagedata: async function(req,res) {
  *                   type: integer
  *       404:
  *         description: The requested page does not exist
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
  *       500:
- *         description: An internal server error
+ *         description: Internal server error.
  */
 
 allvillageData:async function(req, res) {
@@ -362,11 +430,26 @@ allvillageData:async function(req, res) {
  * @swagger
  * /villageName:
  *   get:
+ *     tags:
+ *       - "Village Service"
  *     summary: fetch village,ward,region for each villageName
  *     description: retrive village,ward,region data
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *     responses:
  *       200:
  *         description: Data inserted successfully
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 
@@ -385,11 +468,26 @@ databyVllageName : async function(req, res) {
  * @swagger
  * /villageByWard:
  *   get:
+ *     tags:
+ *       - "Village Service"
  *     summary: count the no. of villages in each ward
  *     description: Retrieve village data
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *     responses:
  *       200:
  *         description: A JSON array of Village object
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 villagebyward : async function (req, res) {
@@ -408,11 +506,26 @@ villagebyward : async function (req, res) {
  * @swagger
  * /villageregion:
  *   get:
+ *     tags:
+ *       - "Village Service"
  *     summary: fetch region names where village is present
  *     description: Retrieve region data 
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *     responses:
  *       200:
  *         description: A JSON array of Village object
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 fetchRegions : async function (req,res){
@@ -431,8 +544,17 @@ fetchRegions : async function (req,res){
  * @swagger
  * /wardsByVillage:
  *   get:
+ *     tags:
+ *       - "Village Service"
  *     summary: fetch ward names that have morethan 1 village.
  *     description: Retrieve region data 
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *     responses:
  *       200:
  *         description: A JSON array of Village object

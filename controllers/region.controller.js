@@ -26,8 +26,21 @@ module.exports = {
  * @swagger
  * /region:
  *   post:
+ *     tags:
+ *       - "Region Service"
  *     summary: Insert Region Data
  *     description: Insert Region Data into the database
+ *     produces:
+ *       - application/json
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: header
+ *         name: x-access-token
+ *         description: Token to be passed as a header.
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody: 
  *       required: true
  *       content:
@@ -37,12 +50,18 @@ module.exports = {
  *     responses:
  *       200:
  *         description: Data inserted successfully
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 regionnew : async function(req,res){
     try{
         const transaction = await sequelize.transaction();
-        const result = await regionService.regionData(req.body,transaction);
+        const result = await regionService.regionData(req,transaction);
         if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
@@ -62,9 +81,17 @@ regionnew : async function(req,res){
  * @swagger
  * /regionbyPk/{id}:
  *   get:
+ *     tags:
+ *       - "Region Service"
  *     summary: get region data with primary key
  *     description: Retrieve region data with primary key.
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: path
  *           name: id
  *           required: true
@@ -80,6 +107,12 @@ regionnew : async function(req,res){
  *               type: array
  *               items:
  *                  $ref : '#components/schemas/Region'
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 regionDataByPk : async function (req,res) {
@@ -98,9 +131,17 @@ regionDataByPk : async function (req,res) {
  * @swagger
  * /region/{id}:
  *   put:
+ *     tags:
+ *       - "Region Service"
  *     summary: update region data with regionId
  *     description: Soft update region data with regionId
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: path
  *           name: id
  *           required: true
@@ -122,6 +163,12 @@ regionDataByPk : async function (req,res) {
  *     responses:
  *       200:
  *         description: region data updated successfully.
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 updatedRegiondata : async function (req,res) {
@@ -145,9 +192,17 @@ updatedRegiondata : async function (req,res) {
  * @swagger
  * /region/{id}:
  *   delete:
+ *     tags:
+ *       - "Region Service"
  *     summary: Delete region data with regionId
  *     description: Soft Delete region data with regionId
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: path
  *           name: id
  *           required: true
@@ -157,6 +212,12 @@ updatedRegiondata : async function (req,res) {
  *     responses:
  *       200:
  *         description: region data deleted successfully.
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 deletedRegiondata : async function(req,res) {
@@ -180,9 +241,17 @@ deletedRegiondata : async function(req,res) {
  * @swagger
  * /regionData:
  *   get:
+ *     tags:
+ *       - "Region Service"
  *     summary: Get region data with pagination
  *     description: Retrieve paginated region data with sorting options.
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: query
  *           name: search
  *           description: search with region name

@@ -1,17 +1,25 @@
 const regionController = require('../controllers/region.controller');
+const authMiddleware = require('../middlewares/auth.middleware');
+const permission = require('../middlewares/authService.middleware')
+const validator = require('../validator/region.validator')
 
 module.exports = function (router){
-    
-router.post('/region', regionController.regionnew),
 
-router.get('/regionData', regionController.allregionData),
+    // router.post('/region', [authMiddleware.vefifyToken, validator.validateCreateRegionData, permission.isValidUserToCreateRegion], controller.createRegion)
+router.post('/region', authMiddleware.verifyToken,permission.isValidUserToEditData,validator.validateRegions,regionController.regionnew),
 
-router.get('/regionbyPk/:id', regionController.regionDataByPk),
+router.get('/regionData', authMiddleware.verifyToken,permission.isValidUserToFetchData,regionController.allregionData),
 
-router.put('/region/:id', regionController.updatedRegiondata),
+router.get('/regionbyPk/:id',authMiddleware.verifyToken,permission.isValidUserToFetchData, regionController.regionDataByPk),
 
-router.delete('/region/:id',regionController.deletedRegiondata)
+router.put('/region/:id',authMiddleware.verifyToken,permission.isValidUserToEditData,validator.validateRegions, regionController.updatedRegiondata),
+
+router.delete('/region/:id',authMiddleware.verifyToken,permission.isValidUserToEditData,regionController.deletedRegiondata)
 
 return router
 
 };
+
+//validate name change
+//changes routes, swagger, joi validators- for '0' 
+//find or create change

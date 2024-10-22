@@ -14,6 +14,8 @@ require('./routes/region.routes')(router);
 require('./routes/ward.routes')(router);
 require('./routes/district.routes')(router);
 require('./routes/village.routes')(router);
+require('./routes/user.routes')(router);
+
 
 const app = express();
 const server = require("http").Server(app);
@@ -48,7 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api',router)
 
-sequelize.sync()
+sequelize.sync({alter:true})
     .then(() => {
         server.listen(process.env.PORT || 3000, () => console.log(`Connected to port ${process.env.PORT || 3000}`));
     })

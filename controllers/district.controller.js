@@ -2,7 +2,7 @@ const customException = require('../errorHandler/customException');
 const districtService = require('../services/district.service');
 const response = require('../errorHandler/response');
 const sequelize = require('../config/database');
-const {SUCCESS_CODE,SERVER_ERROR,BAD_REQUEST, NOT_FOUND, DATA_ALREADY_EXISTS} = require('../utils/statusCode');
+const {SUCCESS_CODE,SERVER_ERROR,BAD_REQUEST, NOT_FOUND} = require('../utils/statusCode');
 
 module.exports = {
 /**
@@ -30,8 +30,17 @@ module.exports = {
  * @swagger
  * /district:
  *   post:
+ *     tags:
+ *       - "District Service"
  *     summary: Insert District Data
  *     description: Insert district data into the database
+ *     parameters:
+ *       - in: header
+ *         name: x-access-token
+ *         description: Token to be passed as a header.
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody: 
  *       required: true
  *       content:
@@ -56,7 +65,7 @@ module.exports = {
 districtnew : async function (req,res){
     try{
         const transaction = await sequelize.transaction();
-        const result = await districtService.districtData(req.body,transaction);
+        const result = await districtService.districtData(req,transaction);
         if(result?.err){
             await transaction.rollback();
             return res.status(BAD_REQUEST).json(customException.error(BAD_REQUEST,result.err.message,result.err.displayMessage));
@@ -77,9 +86,17 @@ districtnew : async function (req,res){
  * @swagger
  * /districtByPK/{id}:
  *   get:
+ *     tags:
+ *       - "District Service"
  *     summary: Get district data with primary key
  *     description: Retrieve district data with primary key.
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: path
  *           name: id
  *           required: true
@@ -93,6 +110,12 @@ districtnew : async function (req,res){
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/District'
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 
@@ -114,9 +137,17 @@ districtDataByPk : async function(req,res) {
  * @swagger
  * /district/{id}:
  *   put:
+ *     tags:
+ *       - "District Service"
  *     summary: update district data with districtId
  *     description: Soft update district data with districtId
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: path
  *           name: id
  *           required: true
@@ -138,10 +169,16 @@ districtDataByPk : async function(req,res) {
  *     responses:
  *       200:
  *         description: district data updated successfully.
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 
-updatedDistrictData : async function(req,res) {
+    updatedDistrictData: async function (req, res) {
     try{
         const transaction = await sequelize.transaction();
         const result = await districtService.updateDistricts(req.params.id,req.body.district,transaction);
@@ -162,9 +199,17 @@ updatedDistrictData : async function(req,res) {
  * @swagger
  * /district/{id}:
  *   delete:
+ *     tags:
+ *       - "District Service"
  *     summary: Delete district data with districtId
  *     description: Soft Delete district data with districtId
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: path
  *           name: id
  *           required: true
@@ -174,6 +219,12 @@ updatedDistrictData : async function(req,res) {
  *     responses:
  *       200:
  *         description: district data deleted successfully.
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 
@@ -198,9 +249,17 @@ deletedDistrictsData : async function(req,res) {
  * @swagger
  * /districtData:
  *   get:
+ *     tags:
+ *       - "District Service"
  *     summary: Get district data with pagination
  *     description: Retrieve paginated district data with sorting options.
  *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Token to be passed as a header.
+ *           required: true
+ *           schema:
+ *              type: string
  *         - in: query
  *           name: search
  *           description: search with district name.
@@ -278,6 +337,5 @@ alldistrictsData : async function(req,res)  {
         return res.status(SERVER_ERROR).json(response.errorWith(SERVER_ERROR, err.message, 'An error occurred while fetching districts'));
     }
 }
-
 };
 
