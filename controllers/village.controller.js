@@ -558,6 +558,12 @@ fetchRegions : async function (req,res){
  *     responses:
  *       200:
  *         description: A JSON array of Village object
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
  */
 
 fetchWardsData : async function (req,res){
